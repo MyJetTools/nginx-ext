@@ -5,6 +5,7 @@ use app::AppContext;
 mod app;
 mod flows;
 mod http;
+mod my_no_sql;
 mod settings;
 
 #[tokio::main]

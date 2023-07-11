@@ -11,5 +11,25 @@ pub fn build_controllers(app: &Arc<AppContext>) -> ControllersMiddleware {
         crate::http::controllers::revoke::GetListOfRevokedCertificatesAction::new(app.clone()),
     ));
 
+    result.register_post_action(Arc::new(
+        crate::http::controllers::certificates::GenerateCertificateAction::new(app.clone()),
+    ));
+
+    result.register_get_action(Arc::new(
+        crate::http::controllers::certificates::DownloadCertAction::new(app.clone()),
+    ));
+
+    result.register_post_action(Arc::new(
+        crate::http::controllers::ca::GenerateCaAction::new(app.clone()),
+    ));
+
+    result.register_get_action(Arc::new(
+        crate::http::controllers::ca::DownloadCertAction::new(app.clone()),
+    ));
+
+    result.register_get_action(Arc::new(
+        crate::http::controllers::ca::DownloadPrivateKeyAction::new(app.clone()),
+    ));
+
     result
 }
