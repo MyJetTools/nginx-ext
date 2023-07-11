@@ -31,15 +31,8 @@ async fn handle_request(
     input_data: GenerateCertificateInputModel,
     _ctx: &HttpContext,
 ) -> Result<HttpOkResult, HttpFailResult> {
-    let result =
-        crate::flows::generate_cert(&action.app, &input_data.ca_name, &input_data.email).await;
-
-    match result {
-        Ok(_) => {
-            return HttpOutput::Empty.into_ok_result(true).into();
-        }
-        Err(err) => return Err(HttpFailResult::as_forbidden(Some(err))),
-    }
+    crate::flows::generate_cert(&action.app, &input_data.ca_name, &input_data.email).await?;
+    HttpOutput::Empty.into_ok_result(true).into()
 }
 
 #[derive(MyHttpInput)]

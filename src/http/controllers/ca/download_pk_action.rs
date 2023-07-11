@@ -3,7 +3,7 @@ use std::sync::Arc;
 use my_http_server::{HttpContext, HttpFailResult, HttpOkResult, HttpOutput};
 use my_http_server_swagger::MyHttpInput;
 
-use crate::{app::AppContext, my_no_sql::ca_entity::ROW_KEY};
+use crate::{app::AppContext, my_no_sql::ca_entity::CaMyNoSqlEntity};
 
 #[my_http_server_swagger::http_route(
     method: "GET",
@@ -33,7 +33,7 @@ async fn handle_request(
     let ca = action
         .app
         .ca_my_no_sql_writer
-        .get_entity(&input_data.ca_name, ROW_KEY, None)
+        .get_entity(&input_data.ca_name, CaMyNoSqlEntity::get_row_key(), None)
         .await
         .unwrap();
 
@@ -46,7 +46,7 @@ async fn handle_request(
 
     let ca = ca.unwrap();
 
-    return HttpOutput::as_text(String::from_utf8(ca.get_private_key()).unwrap())
+    return HttpOutput::as_text(String::from_utf8(ca.get_private_key_content()).unwrap())
         .into_ok_result(true)
         .into();
 }

@@ -8,15 +8,25 @@ pub fn build_controllers(app: &Arc<AppContext>) -> ControllersMiddleware {
     let mut result = ControllersMiddleware::new(None, None);
 
     result.register_get_action(Arc::new(
-        crate::http::controllers::revoke::GetListOfRevokedCertificatesAction::new(app.clone()),
+        crate::http::controllers::certificates::GetListOfRevokedCertificatesAction::new(
+            app.clone(),
+        ),
     ));
 
     result.register_post_action(Arc::new(
         crate::http::controllers::certificates::GenerateCertificateAction::new(app.clone()),
     ));
 
+    result.register_delete_action(Arc::new(
+        crate::http::controllers::certificates::RevokeCertificateAction::new(app.clone()),
+    ));
+
     result.register_get_action(Arc::new(
         crate::http::controllers::certificates::DownloadCertAction::new(app.clone()),
+    ));
+
+    result.register_get_action(Arc::new(
+        crate::http::controllers::certificates::DownloadPemCertificateAction::new(app.clone()),
     ));
 
     result.register_post_action(Arc::new(
@@ -25,6 +35,10 @@ pub fn build_controllers(app: &Arc<AppContext>) -> ControllersMiddleware {
 
     result.register_get_action(Arc::new(
         crate::http::controllers::ca::DownloadCertAction::new(app.clone()),
+    ));
+
+    result.register_get_action(Arc::new(
+        crate::http::controllers::ca::DownloadRevokedAction::new(app.clone()),
     ));
 
     result.register_get_action(Arc::new(

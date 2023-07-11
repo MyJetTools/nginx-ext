@@ -3,17 +3,17 @@ use serde::{Deserialize, Serialize};
 
 #[derive(my_settings_reader::SettingsModel, Serialize, Deserialize, Debug, Clone)]
 pub struct SettingsModel {
-    #[serde(rename = "RevokedCrlPemFileFullPath")]
-    pub revoked_crl_pem_file: String,
+    #[serde(rename = "DataPath")]
+    pub data_path: String,
 
     #[serde(rename = "MyNoSqlDataWriterUrl")]
     pub my_no_sql_data_writer_url: String,
 }
 
 impl SettingsReader {
-    pub async fn get_revoked_crl_pem_file(&self) -> String {
+    pub async fn get_data_path(&self) -> String {
         let read_access = self.settings.read().await;
-        format_path(read_access.revoked_crl_pem_file.as_str())
+        format_path(read_access.data_path.as_str())
     }
 }
 
@@ -26,10 +26,16 @@ impl MyNoSqlWriterSettings for SettingsReader {
 }
 
 fn format_path(src: &str) -> String {
-    if src.starts_with("~") {
+    let mut result = if src.starts_with("~") {
         let home = std::env::var("HOME").unwrap();
-        return src.replace("~", home.as_str());
+        src.replace("~", home.as_str())
+    } else {
+        src.to_string()
+    };
+
+    if !result.ends_with(std::path::MAIN_SEPARATOR) {
+        result.push(std::path::MAIN_SEPARATOR);
     }
 
-    src.to_string()
+    result
 }

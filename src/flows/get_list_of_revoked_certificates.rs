@@ -4,10 +4,9 @@ use openssl::x509::X509Crl;
 
 use crate::app::AppContext;
 
-pub async fn get_list_of_revoked_certificates(app: &Arc<AppContext>) -> Vec<u32> {
-    let revoke_file_path = app.settings_reader.get_revoked_crl_pem_file().await;
-
-    let result = tokio::fs::read_to_string(revoke_file_path).await.unwrap();
+pub async fn get_list_of_revoked_certificates(app: &Arc<AppContext>, cn_an: &str) -> Vec<u32> {
+    let revoked_file_name = crate::storage::utils::get_crl_pem_file_name(app, cn_an).await;
+    let result = tokio::fs::read_to_string(revoked_file_name).await.unwrap();
 
     let crl = X509Crl::from_pem(result.as_bytes()).unwrap();
 

@@ -8,7 +8,7 @@ use openssl::{
     x509::{extension::BasicConstraints, X509NameBuilder, X509},
 };
 
-use crate::{app::AppContext, my_no_sql::ca_entity::CaMyNoSqlEntity};
+use crate::app::AppContext;
 
 pub async fn generate_ca(
     app: &Arc<AppContext>,
@@ -62,20 +62,15 @@ pub async fn generate_ca(
         .unwrap();
     let cert_ca = cert_builder.build();
 
-    let ca_cert = cert_ca.to_pem().unwrap();
-
-    let entity = CaMyNoSqlEntity::new(
-        common_name.to_string(),
-        country_code.to_string(),
-        city.to_string(),
-        organization_name.to_string(),
+    crate::storage::ca::write(
+        app,
+        common_name,
+        country_code,
+        organization_name,
+        city,
+        cert_ca,
         public_key_pem,
         private_key_pem,
-        ca_cert,
-    );
-
-    app.ca_my_no_sql_writer
-        .insert_entity(&entity)
-        .await
-        .unwrap();
+    )
+    .await
 }

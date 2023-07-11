@@ -21,7 +21,10 @@ pub async fn get_next_cert_serial_number(app: &AppContext, common_name: &str) ->
 
     entity.id += 1;
 
-    app.ca_serial_number.insert_or_replace_entity(&entity).await;
+    app.ca_serial_number
+        .insert_or_replace_entity(&entity)
+        .await
+        .unwrap();
 
     entity.id
 }

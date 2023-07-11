@@ -7,6 +7,7 @@ use crate::{
     my_no_sql::{
         ca_entity::CaMyNoSqlEntity, cert_entity::CertMyNoSqlEntity,
         current_serial_number_entity::CurrentSerialNumberMyNoSqlEntity,
+        revoked_entity::RevokedMyNoSqlEntity,
     },
     settings::SettingsReader,
 };
@@ -20,6 +21,8 @@ pub struct AppContext {
     pub ca_my_no_sql_writer: MyNoSqlDataWriter<CaMyNoSqlEntity>,
     pub ca_serial_number: MyNoSqlDataWriter<CurrentSerialNumberMyNoSqlEntity>,
     pub certs_my_no_sql_writer: MyNoSqlDataWriter<CertMyNoSqlEntity>,
+
+    pub revoked_certs_my_no_sql_writer: MyNoSqlDataWriter<RevokedMyNoSqlEntity>,
 }
 
 impl AppContext {
@@ -48,6 +51,17 @@ impl AppContext {
             ),
 
             ca_serial_number: MyNoSqlDataWriter::new(
+                settings_reader.clone(),
+                CreateTableParams {
+                    persist: true,
+                    max_partitions_amount: None,
+                    max_rows_per_partition_amount: None,
+                }
+                .into(),
+                my_no_sql_server_abstractions::DataSynchronizationPeriod::Sec5,
+            ),
+
+            revoked_certs_my_no_sql_writer: MyNoSqlDataWriter::new(
                 settings_reader.clone(),
                 CreateTableParams {
                     persist: true,

@@ -1,5 +1,7 @@
 use serde::{Deserialize, Serialize};
 
+use crate::base_64::*;
+
 #[my_no_sql_macros::my_no_sql_entity("cert")]
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct CertMyNoSqlEntity {
@@ -23,17 +25,17 @@ impl CertMyNoSqlEntity {
             partition_key: cn,
             row_key: email,
             time_stamp: "".to_string(),
-            cert: base64::encode(cert),
-            private_key: base64::encode(private_key),
+            cert: cert.to_base64(),
+            private_key: private_key.to_base64(),
             serial_number,
         }
     }
 
     pub fn get_cert_pem(&self) -> Vec<u8> {
-        base64::decode(&self.cert).unwrap()
+        self.cert.as_str().from_base64()
     }
 
     pub fn get_private_key_pem(&self) -> Vec<u8> {
-        base64::decode(&self.private_key).unwrap()
+        self.private_key.as_str().from_base64()
     }
 }
