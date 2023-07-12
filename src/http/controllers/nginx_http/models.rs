@@ -16,6 +16,7 @@ pub struct HttpConfigurationHttpInputContract {
     pub protocol: String,
 
     #[http_body(name="sslCertificate" description = "Ssl certificate name, or Null/Empty if not used")]
+    #[serde(rename = "sslCertificate")]
     pub ssl_certificate: Option<String>,
 
     #[http_body(description = "List of templates")]
