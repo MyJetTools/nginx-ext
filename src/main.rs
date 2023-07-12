@@ -20,9 +20,10 @@ async fn main() {
     let app = Arc::new(AppContext::new(settings_reader).await);
 
     if app.settings_reader.get_start_nginx().await {
-        {
-            crate::storage::nginx::instance::write_nginx_conf().await;
+        crate::storage::nginx::instance::write_nginx_conf().await;
+        crate::storage::nginx::instance::write_default_conf().await;
 
+        {
             let content = app.nginx_file_content.read().await;
             crate::storage::nginx::instance::generate_config_file(&app, &content).await;
         }
