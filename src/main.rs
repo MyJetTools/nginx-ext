@@ -21,6 +21,8 @@ async fn main() {
 
     if app.settings_reader.get_start_nginx().await {
         {
+            crate::storage::nginx::instance::write_nginx_conf().await;
+
             let content = app.nginx_file_content.read().await;
             crate::storage::nginx::instance::generate_config_file(&app, &content).await;
         }
