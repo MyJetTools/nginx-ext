@@ -16,7 +16,6 @@ pub struct AppContext {
 
 impl AppContext {
     pub async fn new(settings_reader: Arc<SettingsReader>) -> Self {
-        crate::storage::nginx::instance::update_config_file().await;
         let nginx_file_content = crate::storage::nginx::load(&settings_reader).await;
         Self {
             app_states: Arc::new(AppStates::create_initialized()),

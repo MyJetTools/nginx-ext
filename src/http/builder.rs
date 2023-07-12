@@ -56,5 +56,7 @@ pub fn build_controllers(app: &Arc<AppContext>) -> ControllersMiddleware {
     result.register_get_action(Arc::new(
         crate::http::controllers::nginx_upstream::GetNginxConfigurationAction::new(app.clone()),
     ));
+
+    result.register_post_action(Arc::new(crate::http::controllers::nginx::ReloadAction));
     result
 }
