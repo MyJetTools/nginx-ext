@@ -7,7 +7,9 @@ pub use upstreams::*;
 
 #[derive(Default, Deserialize, Serialize)]
 pub struct NginxFileContent {
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub upstreams: Option<HashMap<String, Vec<UpStreamRouteStorageModel>>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub http_configs: Option<HashMap<String, HttpConfig>>,
 }
 

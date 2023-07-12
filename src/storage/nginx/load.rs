@@ -18,5 +18,5 @@ pub async fn load(settings_reader: &SettingsReader) -> NginxFileContent {
 
     let content = content.unwrap();
 
-    serde_json::from_str(content.as_str()).unwrap()
+    serde_yaml::from_str(content.as_str()).unwrap()
 }
