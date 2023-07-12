@@ -6,6 +6,7 @@ pub async fn delete(app: &AppContext, name: &str) -> bool {
 
     if result {
         super::super::save(&app.settings_reader, &nginx_content).await;
+        super::super::instance::generate_up_streams_file(&nginx_content).await;
     }
 
     result
