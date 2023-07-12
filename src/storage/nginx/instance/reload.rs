@@ -8,9 +8,10 @@ pub async fn reload() -> Result<String, String> {
         .await
         .unwrap();
 
+    println!("stderr: {:?}", output);
     if !output.status.success() {
         return Err(String::from_utf8_lossy(&output.stderr).to_string());
     }
 
-    return Err(String::from_utf8_lossy(&output.stdout).to_string());
+    return Ok(String::from_utf8_lossy(&output.stdout).to_string());
 }
