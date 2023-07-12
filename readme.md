@@ -1,6 +1,6 @@
 ## What is this?
 
-This is an add-on to the nginx, which gives the ability to control nginx by rest-api interface.
+This is an add-on to the nginx, allowing to control nginx by rest-API interface at *:8000 HTTP port.
 
 ### How to start it
 
