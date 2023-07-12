@@ -127,7 +127,7 @@ fn render_templates(
                 for _ in 0..offset {
                     dest.push(' ');
                 }
-                dest.push_str(format!("// Template {}\n", template_id).as_str());
+                dest.push_str(format!("# Template {}\n", template_id).as_str());
                 for line in template {
                     for _ in 0..offset {
                         dest.push(' ');
@@ -138,10 +138,10 @@ fn render_templates(
 
                 dest.push_str("\n");
             } else {
-                dest.push_str(format!("// Template {}  is not found\n", template_id).as_str());
+                dest.push_str(format!("# Template {}  is not found\n", template_id).as_str());
             }
         }
     } else {
-        dest.push_str(format!("// Templates {:?} are not found\n", templates).as_str());
+        dest.push_str(format!("# Templates {:?} are not found\n", templates).as_str());
     }
 }
