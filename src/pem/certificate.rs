@@ -28,3 +28,9 @@ impl Into<String> for PemCertificate {
         String::from_utf8(self.0).unwrap()
     }
 }
+
+impl Into<PemCertificate> for X509 {
+    fn into(self) -> PemCertificate {
+        PemCertificate::from_bytes(self.to_pem().unwrap())
+    }
+}

@@ -22,6 +22,7 @@ async fn main() {
     if app.settings_reader.get_start_nginx().await {
         crate::storage::nginx::instance::write_nginx_conf().await;
         crate::storage::nginx::instance::write_default_conf().await;
+        crate::storage::nginx::instance::create_self_signed_ssl_certificate_if_needed().await;
 
         {
             let content = app.nginx_file_content.read().await;

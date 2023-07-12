@@ -29,3 +29,9 @@ impl Into<String> for PemPrivateKey {
         String::from_utf8(self.0).unwrap()
     }
 }
+
+impl Into<PemPrivateKey> for PKey<Private> {
+    fn into(self) -> PemPrivateKey {
+        PemPrivateKey::from_bytes(self.public_key_to_pem().unwrap())
+    }
+}
