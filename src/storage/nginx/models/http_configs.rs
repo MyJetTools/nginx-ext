@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub enum HttpProtocol {
     Http,
     Https,
@@ -17,8 +17,16 @@ impl HttpProtocol {
             HttpProtocol::Https2 => dest.push_str(" ssl http2"),
         }
     }
+
+    pub fn to_string(&self) -> &'static str {
+        match self {
+            HttpProtocol::Http => "http",
+            HttpProtocol::Https => "https",
+            HttpProtocol::Https2 => "https2",
+        }
+    }
 }
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct HttpConfig {
     pub protocol: HttpProtocol,
     pub port: u16,
@@ -69,7 +77,7 @@ impl HttpConfig {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct HttpConfigLocation {
     pub location: String,
     pub proxy_pass: String,
