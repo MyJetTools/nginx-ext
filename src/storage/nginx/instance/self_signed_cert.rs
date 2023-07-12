@@ -1,10 +1,3 @@
-use openssl::{
-    hash::MessageDigest,
-    nid::Nid,
-    pkey::PKey,
-    x509::{extension::SubjectKeyIdentifier, X509},
-};
-
 use crate::pem::*;
 const CERTS_FOLDER: &str = "/etc/nginx/certs";
 
@@ -31,43 +24,15 @@ pub async fn create_self_signed_ssl_certificate_if_needed() {
 }
 
 fn generate_self_signed_ssl_certificate() -> (PemPrivateKey, PemCertificate) {
-    use openssl::rsa::Rsa;
-    use openssl::x509::X509NameBuilder;
-    // Generate a new private key.
-    let rsa = Rsa::generate(4096).unwrap();
-    let p_key = PKey::from_rsa(rsa).unwrap();
+    use rcgen::generate_simple_self_signed;
+    let subject_alt_names = vec!["localhost".into(), "127.0.0.1".into()];
+    let cert = generate_simple_self_signed(subject_alt_names).unwrap();
 
-    // Build the X509 name.
-    let mut x509_name = X509NameBuilder::new().unwrap();
-    x509_name
-        .append_entry_by_nid(Nid::COMMONNAME, "SelfSigned")
-        .unwrap();
-    let x509_name = x509_name.build();
+    let key = cert.serialize_private_key_pem().into_bytes();
+    let cert = cert.serialize_pem().unwrap().into_bytes();
 
-    // Build the X509 object.
-    let mut x509 = X509::builder().unwrap();
-    x509.set_version(2).unwrap();
-    x509.set_subject_name(&x509_name).unwrap();
-    x509.set_issuer_name(&x509_name).unwrap();
-    x509.set_pubkey(&p_key).unwrap();
-
-    let not_after = openssl::asn1::Asn1Time::days_from_now(365 * 10).unwrap();
-    x509.set_not_after(&not_after).unwrap();
-
-    // Add the SubjectKeyIdentifier.
-    let subject_key_identifier = SubjectKeyIdentifier::new();
-    x509.append_extension(
-        subject_key_identifier
-            .build(&x509.x509v3_context(None, None))
-            .unwrap(),
+    (
+        PemPrivateKey::from_bytes(key),
+        PemCertificate::from_bytes(cert),
     )
-    .unwrap();
-
-    // Sign the certificate with the private key.
-    x509.sign(&p_key, MessageDigest::sha256()).unwrap();
-
-    // Get the certificate
-    let cert = x509.build();
-
-    (p_key.into(), cert.into())
 }
