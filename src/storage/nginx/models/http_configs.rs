@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 
+use rust_extensions::StrOrString;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -23,6 +24,14 @@ impl HttpProtocol {
             HttpProtocol::Http => "Http",
             HttpProtocol::Https => "Https",
             HttpProtocol::Https2 => "Https2",
+        }
+    }
+
+    pub fn is_https(&self) -> bool {
+        match self {
+            HttpProtocol::Http => false,
+            HttpProtocol::Https => true,
+            HttpProtocol::Https2 => true,
         }
     }
 }
@@ -54,7 +63,19 @@ impl HttpConfig {
         dest.push_str(domain);
         dest.push_str(";\n");
 
-        if let Some(ssl_cert) = &self.ssl_cert {
+        let ssl_cert = if let Some(ssl_cert) = &self.ssl_cert {
+            Some(StrOrString::create_as_str(ssl_cert))
+        } else {
+            if self.protocol.is_https() {
+                Some(StrOrString::create_as_str(
+                    crate::storage::nginx::instance::SELF_SIGNED_CERT_NAME,
+                ))
+            } else {
+                None
+            }
+        };
+
+        if let Some(ssl_cert) = ssl_cert {
             dest.push_str("\n ssl_certificate   /etc/nginx/certs/");
             dest.push_str(ssl_cert.as_str());
             dest.push_str(".crt;\n");

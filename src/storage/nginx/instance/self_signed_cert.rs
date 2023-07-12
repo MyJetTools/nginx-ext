@@ -1,9 +1,11 @@
 use crate::pem::*;
 const CERTS_FOLDER: &str = "/etc/nginx/certs";
 
+pub const SELF_SIGNED_CERT_NAME: &str = "self";
+
 pub async fn create_self_signed_ssl_certificate_if_needed() {
-    let self_cert_file = format!("{}/self.crt", CERTS_FOLDER);
-    let self_pk_file = format!("{}/self.key", CERTS_FOLDER);
+    let self_cert_file = format!("{CERTS_FOLDER}/{SELF_SIGNED_CERT_NAME}.crt");
+    let self_pk_file = format!("{CERTS_FOLDER}/{SELF_SIGNED_CERT_NAME}.key");
 
     let result_cert = tokio::fs::read(self_cert_file.as_str()).await;
     let result_pk = tokio::fs::read(self_pk_file.as_str()).await;
