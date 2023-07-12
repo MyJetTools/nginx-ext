@@ -11,7 +11,6 @@ use openssl::{
 use crate::app::AppContext;
 
 use super::FlowError;
-use crate::storage::utils::*;
 
 pub async fn generate_cert(
     app: &Arc<AppContext>,
@@ -21,25 +20,21 @@ pub async fn generate_cert(
     let ca_private_key = crate::storage::ca::load_private_key(app, ca_cn).await;
 
     //let ca_path = crate::storage::utils::get_ca_path(app, ca_cn).await;
-    let path = crate::storage::cert::create_folder_if_not_exists(app, ca_cn, email).await;
-
-    let private_key_file_name = format!("{}/{}", path, PRIVATE_KEY_FILE_NAME);
-    let public_key_file_name = format!("{}/{}", path, PUBLIC_KEY_FILE_NAME);
-    let cert_file_name = format!("{}/{}", path, CERT_FILE_NAME);
+    let cert_path = crate::storage::cert::create_folder_if_not_exists(app, ca_cn, email).await;
 
     // Generate a 2048 bit RSA private key for the client
     let rsa_client = Rsa::generate(4096).unwrap();
     let pkey_client = PKey::from_rsa(rsa_client).unwrap();
 
     tokio::fs::write(
-        private_key_file_name,
+        cert_path.to_private_key_file_name(),
         pkey_client.private_key_to_pem_pkcs8().unwrap(),
     )
     .await
     .unwrap();
 
     tokio::fs::write(
-        public_key_file_name,
+        cert_path.to_public_key_file_name(),
         pkey_client.public_key_to_pem().unwrap(),
     )
     .await
@@ -80,11 +75,11 @@ pub async fn generate_cert(
     cert_builder.set_pubkey(&pkey_client).unwrap();
 
     cert_builder
-        .sign(&ca_private_key, MessageDigest::sha256())
+        .sign(&ca_private_key.into_private_key(), MessageDigest::sha256())
         .unwrap();
     let cert_client = cert_builder.build();
 
-    tokio::fs::write(cert_file_name, cert_client.to_pem().unwrap())
+    tokio::fs::write(cert_path.to_cert_file_name(), cert_client.to_pem().unwrap())
         .await
         .unwrap();
 

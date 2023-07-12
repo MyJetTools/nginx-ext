@@ -1,9 +1,4 @@
-use openssl::{
-    pkey::{PKey, Private},
-    x509::X509,
-};
-
-use crate::{app::AppContext, my_no_sql::ca_entity::CaMyNoSqlEntity};
+use crate::app::AppContext;
 
 use super::FlowError;
 
@@ -13,35 +8,16 @@ pub async fn get_pfx(
     email: &str,
     password: &str,
 ) -> Result<Vec<u8>, FlowError> {
-    let ca = app
-        .ca_my_no_sql_writer
-        .get_entity(ca_cn, CaMyNoSqlEntity::get_row_key(), None)
-        .await
-        .unwrap();
+    let private_key = crate::storage::cert::load_pem_private_key(app, ca_cn, email).await;
 
-    if ca.is_none() {
-        return Err(FlowError::CaNotFound);
-    }
+    let private_key = private_key.into_private_key();
 
-    let cert: Option<crate::my_no_sql::cert_entity::CertMyNoSqlEntity> = app
-        .certs_my_no_sql_writer
-        .get_entity(ca_cn, email, None)
-        .await
-        .unwrap();
+    let certificate = crate::storage::cert::load_pem_certificate(app, ca_cn, email).await;
 
-    if cert.is_none() {
-        return Err(FlowError::CertNotFound);
-    }
-
-    let cert = cert.unwrap();
-
-    let client_private_key: PKey<Private> =
-        PKey::private_key_from_pem(cert.get_private_key_pem().as_slice()).unwrap();
-
-    let client_cert = X509::from_pem(cert.get_cert_pem().as_slice()).unwrap();
+    let certificate = certificate.into_certificate();
 
     let pkcs12 = openssl::pkcs12::Pkcs12::builder()
-        .build(password, email, &client_private_key, &client_cert)
+        .build(password, email, &private_key, &certificate)
         .unwrap();
 
     Ok(pkcs12.to_der().unwrap())

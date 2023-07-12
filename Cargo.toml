@@ -22,9 +22,6 @@ my-settings-reader = { tag = "0.1.5", git = "https://github.com/MyJetTools/my-se
     "background-reader",
 ] }
 
-my-no-sql-server-abstractions = { tag = "0.1.1", git = "https://github.com/MyJetTools/my-no-sql-server-abstractions.git" }
-my-no-sql-macros = { tag = "0.1.0", git = "https://github.com/MyJetTools/my-no-sql-macros.git" }
-my-no-sql-data-writer = { tag = "0.2.0", git = "https://github.com/MyJetTools/my-no-sql-data-writer.git" }
 
 tokio = { version = "*", features = ["full"] }
 async-trait = "*"

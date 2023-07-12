@@ -3,10 +3,14 @@ use rust_extensions::slice_of_u8_utils::SliceOfU8Ext;
 
 use crate::app::AppContext;
 
-pub async fn get_509_name(app: &AppContext, cn_name: &str) -> X509Name {
-    let config_file_name = super::super::utils::get_config_name(app, cn_name).await;
+use super::CaPath;
 
-    let content = tokio::fs::read_to_string(config_file_name).await.unwrap();
+pub async fn get_509_name(app: &AppContext, cn_name: &str) -> X509Name {
+    let ca_path = CaPath::new(app, cn_name).await;
+
+    let content = tokio::fs::read_to_string(ca_path.to_config_file_name())
+        .await
+        .unwrap();
 
     let country = extract_value(content.as_str(), "countryName");
     let city = extract_value(content.as_str(), "localityName");

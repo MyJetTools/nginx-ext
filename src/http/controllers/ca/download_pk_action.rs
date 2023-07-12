@@ -3,7 +3,7 @@ use std::sync::Arc;
 use my_http_server::{HttpContext, HttpFailResult, HttpOkResult, HttpOutput};
 use my_http_server_swagger::MyHttpInput;
 
-use crate::{app::AppContext, my_no_sql::ca_entity::CaMyNoSqlEntity};
+use crate::app::AppContext;
 
 #[my_http_server_swagger::http_route(
     method: "GET",
@@ -30,23 +30,10 @@ async fn handle_request(
     input_data: DownloadCaPrivateKeyInputModel,
     _ctx: &HttpContext,
 ) -> Result<HttpOkResult, HttpFailResult> {
-    let ca = action
-        .app
-        .ca_my_no_sql_writer
-        .get_entity(&input_data.ca_name, CaMyNoSqlEntity::get_row_key(), None)
-        .await
-        .unwrap();
+    let content =
+        crate::storage::ca::load_private_key(&action.app, input_data.ca_name.as_str()).await;
 
-    if ca.is_none() {
-        return Err(HttpFailResult::as_not_found(
-            "CA not found".to_string(),
-            false,
-        ));
-    }
-
-    let ca = ca.unwrap();
-
-    return HttpOutput::as_text(String::from_utf8(ca.get_private_key_content()).unwrap())
+    return HttpOutput::as_text(content.into())
         .into_ok_result(true)
         .into();
 }

@@ -1,20 +1,23 @@
 use tokio::process::Command;
 
-use crate::{app::AppContext, storage::utils::CERT_FILE_NAME};
+use crate::{
+    app::AppContext,
+    storage::{ca::CaPath, cert::CertPath},
+};
 
 use super::FlowError;
 
 pub async fn revoke_cert(app: &AppContext, ca_cn: &str, email: &str) -> Result<(), FlowError> {
-    let cert_path = crate::storage::cert::compile_cert_path(app, ca_cn, email).await;
+    let ca_path = CaPath::new(app, ca_cn).await;
 
-    let cert_file_name = format!("{}/{}", cert_path, CERT_FILE_NAME);
+    let ca_private_key_file_name = ca_path.to_private_key_file_name();
 
-    println!("Revoking certificate: {}", cert_path);
+    let ca_cert_file_name = ca_path.to_cert_file_name();
+    let config_file_name = ca_path.to_config_file_name();
 
-    let ca_key_path = crate::storage::utils::get_ca_private_key_file_name(app, ca_cn).await;
+    let crl_pem_file = ca_path.to_crl_file_name();
 
-    let ca_cert_path = crate::storage::utils::get_ca_cert_file_name(app, ca_cn).await;
-    let config_file_name = crate::storage::utils::get_config_name(app, ca_cn).await;
+    let cert_path = CertPath::from_ca_path(ca_path, email);
 
     //openssl ca -config ./openssl.cnf -keyfile ca_private.key -cert ca_cert.pem -revoke cert_to_revoke.pem
 
@@ -23,11 +26,11 @@ pub async fn revoke_cert(app: &AppContext, ca_cn: &str, email: &str) -> Result<(
         .arg("-config")
         .arg(config_file_name.as_str())
         .arg("-keyfile")
-        .arg(ca_key_path.as_str())
+        .arg(ca_private_key_file_name.as_str())
         .arg("-cert")
-        .arg(ca_cert_path.as_str())
+        .arg(ca_cert_file_name.as_str())
         .arg("-revoke")
-        .arg(cert_file_name.as_str())
+        .arg(cert_path.into_cert_file_name())
         .output()
         .await
         .unwrap();
@@ -40,22 +43,17 @@ pub async fn revoke_cert(app: &AppContext, ca_cn: &str, email: &str) -> Result<(
 
     //openssl ca -config ./openssl.cnf -keyfile ca_private.key -cert ca_cert.pem -revoke cert_to_revoke.pem
 
-    let ca_private_key_file = crate::storage::utils::get_ca_private_key_file_name(app, ca_cn).await;
-    let ca_cert_file = crate::storage::utils::get_ca_cert_file_name(app, ca_cn).await;
-
-    let crl_pem = crate::storage::utils::get_crl_pem_file_name(app, ca_cn).await;
-
     let output = Command::new("openssl")
         .arg("ca")
         .arg("-config")
         .arg(config_file_name.as_str())
         .arg("-keyfile")
-        .arg(ca_private_key_file)
+        .arg(ca_private_key_file_name)
         .arg("-cert")
-        .arg(ca_cert_file)
+        .arg(ca_cert_file_name)
         .arg("-gencrl")
         .arg("-out")
-        .arg(crl_pem)
+        .arg(crl_pem_file)
         .output()
         .await
         .unwrap();

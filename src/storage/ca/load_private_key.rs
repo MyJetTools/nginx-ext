@@ -1,12 +1,9 @@
-use crate::app::AppContext;
+use crate::{app::AppContext, pem::PemPrivateKey};
 
-pub async fn load_private_key(
-    app: &AppContext,
-    ca_cn: &str,
-) -> openssl::pkey::PKey<openssl::pkey::Private> {
-    let file_name = super::super::utils::get_ca_private_key_file_name(app, ca_cn).await;
+use super::CaPath;
 
-    let private_key_pem = tokio::fs::read_to_string(file_name.as_str()).await.unwrap();
-
-    openssl::pkey::PKey::private_key_from_pem(private_key_pem.as_bytes()).unwrap()
+pub async fn load_private_key(app: &AppContext, ca_cn: &str) -> PemPrivateKey {
+    let file_name = CaPath::new(app, ca_cn).await.into_private_key_file_name();
+    let content = tokio::fs::read(file_name.as_str()).await.unwrap();
+    PemPrivateKey::from_bytes(content)
 }

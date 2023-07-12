@@ -30,9 +30,14 @@ async fn handle_request(
     input_data: DownloadPemClientCertInputModel,
     _ctx: &HttpContext,
 ) -> Result<HttpOkResult, HttpFailResult> {
-    let result =
-        crate::flows::get_pem_cert(&action.app, &input_data.ca_name, &input_data.email).await?;
-    return HttpOutput::as_text(String::from_utf8(result).unwrap())
+    let result = crate::storage::cert::load_pem_certificate(
+        &action.app,
+        &input_data.ca_name,
+        &input_data.email,
+    )
+    .await;
+
+    return HttpOutput::as_text(String::from_utf8(result.into()).unwrap())
         .into_ok_result(true)
         .into();
 }

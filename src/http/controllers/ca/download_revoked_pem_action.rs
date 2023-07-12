@@ -3,7 +3,7 @@ use std::sync::Arc;
 use my_http_server::{HttpContext, HttpFailResult, HttpOkResult, HttpOutput};
 use my_http_server_swagger::MyHttpInput;
 
-use crate::app::AppContext;
+use crate::{app::AppContext, storage::ca::CaPath};
 
 #[my_http_server_swagger::http_route(
     method: "GET",
@@ -30,8 +30,9 @@ async fn handle_request(
     input_data: DownloadRevokedInputModel,
     _ctx: &HttpContext,
 ) -> Result<HttpOkResult, HttpFailResult> {
-    let file_name =
-        crate::storage::utils::get_crl_pem_file_name(&action.app, &input_data.ca_name).await;
+    let file_name = CaPath::new(&action.app, &input_data.ca_name)
+        .await
+        .into_crl_file_name();
 
     let content = tokio::fs::read_to_string(file_name).await.unwrap();
     return HttpOutput::as_text(content).into_ok_result(true).into();

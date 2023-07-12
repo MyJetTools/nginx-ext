@@ -2,14 +2,13 @@ mod error;
 mod generate_ca;
 mod generate_cert;
 mod get_list_of_revoked_certificates;
-mod get_next_cert_serial_number;
-mod get_pem_cert;
+
 mod get_pfx;
 mod revoke_cert;
 pub use error::*;
 pub use generate_ca::*;
 pub use generate_cert::*;
 pub use get_list_of_revoked_certificates::*;
-pub use get_pem_cert::*;
+
 pub use get_pfx::*;
 pub use revoke_cert::*;
