@@ -19,14 +19,16 @@ async fn main() {
 
     let app = Arc::new(AppContext::new(settings_reader).await);
 
-    println!("Starting nginx");
+    if app.settings_reader.get_start_nginx().await {
+        println!("Starting nginx");
 
-    let output = tokio::process::Command::new("nginx")
-        .output()
-        .await
-        .unwrap();
+        let output = tokio::process::Command::new("nginx")
+            .output()
+            .await
+            .unwrap();
 
-    println!("Nginx start result: {:?}", output);
+        println!("Nginx start result: {:?}", output);
+    }
 
     crate::http::start(&app);
 

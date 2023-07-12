@@ -1,11 +1,6 @@
-mod generate_up_streams_file;
+mod generate_config_file;
 mod reload;
-pub use generate_up_streams_file::*;
+pub use generate_config_file::*;
 pub use reload::*;
-const ROOT_NGINX_UP_STREAMS_PATH: &str = "/etc/nginx/sites-enabled/";
 
-pub fn get_up_streams_file_name() -> String {
-    let mut path = String::from(ROOT_NGINX_UP_STREAMS_PATH);
-    path.push_str("gen_upstreams.conf");
-    path
-}
+use crate::app::AppContext;

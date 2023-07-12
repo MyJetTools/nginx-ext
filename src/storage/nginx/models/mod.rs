@@ -1,42 +1,50 @@
+mod http_configs;
 mod upstreams;
-use std::collections::HashMap;
-
+pub use http_configs::*;
 use serde::*;
+use std::collections::HashMap;
 pub use upstreams::*;
 
 #[derive(Default, Deserialize, Serialize)]
 pub struct NginxFileContent {
-    pub upstreams: HashMap<String, Vec<UpStreamRouteStorageModel>>,
+    pub upstreams: Option<HashMap<String, Vec<UpStreamRouteStorageModel>>>,
+    pub http_configs: Option<HashMap<String, HttpConfig>>,
 }
 
 impl NginxFileContent {
-    pub fn generate_nginx_up_streams_configuration(&self) -> String {
-        let mut result = String::new();
+    pub fn generate_nginx_up_streams_configuration(&self, dest: &mut String) {
+        if let Some(upstrams) = self.upstreams.as_ref() {
+            for (name, routes) in upstrams {
+                dest.push_str("upstream ");
+                dest.push_str(name);
+                dest.push_str(" {\n");
 
-        for (name, routes) in &self.upstreams {
-            result.push_str("upstream ");
-            result.push_str(name);
-            result.push_str(" {\n");
+                for rt in routes {
+                    dest.push_str("  server ");
+                    dest.push_str(rt.remote_addr.as_str());
 
-            for rt in routes {
-                result.push_str("  server ");
-                result.push_str(rt.remote_addr.as_str());
+                    if let Some(w) = rt.weight {
+                        dest.push_str(" weight=");
+                        dest.push_str(w.to_string().as_str());
+                    }
 
-                if let Some(w) = rt.weight {
-                    result.push_str(" weight=");
-                    result.push_str(w.to_string().as_str());
+                    if rt.is_backup {
+                        dest.push_str(" backup");
+                    }
+
+                    dest.push_str(";\n")
                 }
 
-                if rt.is_backup {
-                    result.push_str(" backup");
-                }
-
-                result.push_str(";\n")
+                dest.push_str("}\n\n");
             }
-
-            result.push_str("}\n\n");
         }
+    }
 
-        result
+    pub fn generate_nginx_http_configuration(&self, dest: &mut String) {
+        if let Some(http_configs) = self.http_configs.as_ref() {
+            for (domain, http_config) in http_configs {
+                http_config.generate_nginx_configuration(domain, dest);
+            }
+        }
     }
 }

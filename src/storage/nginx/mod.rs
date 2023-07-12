@@ -3,6 +3,7 @@ pub mod models;
 pub use load::*;
 mod save;
 pub use save::*;
+pub mod http_configs;
 pub mod instance;
 pub mod up_streams;
 

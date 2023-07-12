@@ -8,7 +8,7 @@ use crate::{app::AppContext, storage::nginx::models::UpStreamRouteStorageModel};
 
 #[my_http_server_swagger::http_route(
     method: "POST",
-    route: "/api/nginx/v1/upstream",
+    route: "/api/nginx/upstream/v1",
     summary: "Insert or replace upstream configuration",
     description: "Insert or replace upstream configuration",
     controller: "Nginx UpStreams",
