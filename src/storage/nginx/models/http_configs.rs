@@ -20,9 +20,9 @@ impl HttpProtocol {
 
     pub fn to_string(&self) -> &'static str {
         match self {
-            HttpProtocol::Http => "http",
-            HttpProtocol::Https => "https",
-            HttpProtocol::Https2 => "https2",
+            HttpProtocol::Http => "Http",
+            HttpProtocol::Https => "Https",
+            HttpProtocol::Https2 => "Https2",
         }
     }
 }
@@ -123,6 +123,11 @@ fn render_templates(
     if let Some(templates_repo) = templates_repo {
         for template_id in templates {
             if let Some(template) = templates_repo.get(template_id) {
+                dest.push_str("\n");
+                for _ in 0..offset {
+                    dest.push(' ');
+                }
+                dest.push_str(format!("// Template {}\n", template_id).as_str());
                 for line in template {
                     for _ in 0..offset {
                         dest.push(' ');
@@ -130,6 +135,8 @@ fn render_templates(
                     dest.push_str(line.as_str());
                     dest.push_str("\n");
                 }
+
+                dest.push_str("\n");
             } else {
                 dest.push_str(format!("// Template {}  is not found\n", template_id).as_str());
             }
