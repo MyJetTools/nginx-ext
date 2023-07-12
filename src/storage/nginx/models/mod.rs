@@ -11,6 +11,8 @@ pub struct NginxFileContent {
     pub upstreams: Option<HashMap<String, Vec<UpStreamRouteStorageModel>>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub http_configs: Option<HashMap<String, HttpConfig>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub templates: Option<HashMap<String, Vec<String>>>,
 }
 
 impl NginxFileContent {
@@ -45,7 +47,7 @@ impl NginxFileContent {
     pub fn generate_nginx_http_configuration(&self, dest: &mut String) {
         if let Some(http_configs) = self.http_configs.as_ref() {
             for (domain, http_config) in http_configs {
-                http_config.generate_nginx_configuration(domain, dest);
+                http_config.generate_nginx_configuration(domain, dest, &self.templates);
             }
         }
     }

@@ -70,5 +70,14 @@ pub fn build_controllers(app: &Arc<AppContext>) -> ControllersMiddleware {
     ));
 
     result.register_post_action(Arc::new(crate::http::controllers::nginx::ReloadAction));
+
+    result.register_post_action(Arc::new(
+        crate::http::controllers::nginx_templates::InsertOrReplaceAction::new(app.clone()),
+    ));
+
+    result.register_delete_action(Arc::new(
+        crate::http::controllers::nginx_templates::DeleteTemplateAction::new(app.clone()),
+    ));
+
     result
 }

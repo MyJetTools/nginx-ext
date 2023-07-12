@@ -42,7 +42,7 @@ fn format_path(src: &str) -> String {
 }
 
 fn format_file(src: &str) -> String {
-    let mut result = if src.starts_with("~") {
+    let result = if src.starts_with("~") {
         let home = std::env::var("HOME").unwrap();
         src.replace("~", home.as_str())
     } else {

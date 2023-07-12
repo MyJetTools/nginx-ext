@@ -52,6 +52,9 @@ struct InsertOrReplaceHttpConfigurationHttpInputContract {
 
     #[http_body(description = "Upstream routes")]
     pub locations: Vec<HttpLocationHttpModel>,
+
+    #[http_body(description = "List of templates")]
+    pub templates: Option<Vec<String>>,
 }
 
 impl InsertOrReplaceHttpConfigurationHttpInputContract {
@@ -79,6 +82,7 @@ impl InsertOrReplaceHttpConfigurationHttpInputContract {
             } else {
                 None
             },
+            templates: self.templates,
             locations: self.locations.into_iter().map(|x| x.into()).collect(),
         };
 
@@ -92,6 +96,8 @@ struct HttpLocationHttpModel {
     pub location: String,
     #[serde(rename = "proxyPass")]
     pub proxy_pass: String,
+
+    pub templates: Option<Vec<String>>,
 }
 
 impl Into<HttpConfigLocation> for HttpLocationHttpModel {
@@ -99,6 +105,7 @@ impl Into<HttpConfigLocation> for HttpLocationHttpModel {
         HttpConfigLocation {
             location: self.location,
             proxy_pass: self.proxy_pass,
+            templates: self.templates,
         }
     }
 }

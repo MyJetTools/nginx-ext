@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -22,10 +24,17 @@ pub struct HttpConfig {
     pub port: u16,
     pub locations: Vec<HttpConfigLocation>,
     pub ssl_cert: Option<String>,
+
+    pub templates: Option<Vec<String>>,
 }
 
 impl HttpConfig {
-    pub fn generate_nginx_configuration(&self, domain: &str, dest: &mut String) {
+    pub fn generate_nginx_configuration(
+        &self,
+        domain: &str,
+        dest: &mut String,
+        templates_repo: &Option<HashMap<String, Vec<String>>>,
+    ) {
         dest.push_str("server {\n");
 
         dest.push_str(" listen ");
@@ -50,8 +59,10 @@ impl HttpConfig {
         dest.push_str("\n access_log off;\n");
         dest.push_str(" error_log off;\n");
 
+        render_templates(dest, &self.templates, templates_repo, 1);
+
         for location in &self.locations {
-            location.generate_nginx_configuration(dest);
+            location.generate_nginx_configuration(dest, templates_repo);
         }
 
         dest.push_str("\n}\n");
@@ -62,10 +73,15 @@ impl HttpConfig {
 pub struct HttpConfigLocation {
     pub location: String,
     pub proxy_pass: String,
+    pub templates: Option<Vec<String>>,
 }
 
 impl HttpConfigLocation {
-    pub fn generate_nginx_configuration(&self, dest: &mut String) {
+    pub fn generate_nginx_configuration(
+        &self,
+        dest: &mut String,
+        templates_repo: &Option<HashMap<String, Vec<String>>>,
+    ) {
         dest.push_str("\n location ");
         dest.push_str(self.location.as_str());
         dest.push_str("  {\n");
@@ -74,6 +90,43 @@ impl HttpConfigLocation {
         dest.push_str(self.proxy_pass.as_str());
         dest.push_str(";\n");
 
+        render_templates(dest, &self.templates, templates_repo, 2);
+
         dest.push_str(" }\n");
+    }
+}
+
+fn render_templates(
+    dest: &mut String,
+    templates: &Option<Vec<String>>,
+    templates_repo: &Option<HashMap<String, Vec<String>>>,
+    offset: usize,
+) {
+    if templates.is_none() {
+        return;
+    }
+
+    let templates = templates.as_ref().unwrap();
+
+    if templates.len() == 0 {
+        return;
+    }
+
+    if let Some(templates_repo) = templates_repo {
+        for template_id in templates {
+            if let Some(template) = templates_repo.get(template_id) {
+                for line in template {
+                    for _ in 0..offset {
+                        dest.push(' ');
+                    }
+                    dest.push_str(line.as_str());
+                    dest.push_str("\n");
+                }
+            } else {
+                dest.push_str(format!("// Template {}  is not found\n", template_id).as_str());
+            }
+        }
+    } else {
+        dest.push_str(format!("// Templates {:?} are not found\n", templates).as_str());
     }
 }
