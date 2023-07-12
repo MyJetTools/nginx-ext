@@ -88,7 +88,7 @@ impl InsertOrReplaceHttpConfigurationHttpInputContract {
 
 #[derive(MyHttpInputObjectStructure, Deserialize)]
 struct HttpLocationHttpModel {
-    #[serde(rename = "remoteAddr")]
+    #[serde(rename = "location")]
     pub location: String,
     #[serde(rename = "proxyPass")]
     pub proxy_pass: String,
