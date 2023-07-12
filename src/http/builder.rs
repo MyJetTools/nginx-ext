@@ -45,5 +45,16 @@ pub fn build_controllers(app: &Arc<AppContext>) -> ControllersMiddleware {
         crate::http::controllers::ca::DownloadPrivateKeyAction::new(app.clone()),
     ));
 
+    result.register_post_action(Arc::new(
+        crate::http::controllers::nginx_upstream::InsertOrReplaceUpstreamAction::new(app.clone()),
+    ));
+
+    result.register_delete_action(Arc::new(
+        crate::http::controllers::nginx_upstream::DeleteUpstreamAction::new(app.clone()),
+    ));
+
+    result.register_get_action(Arc::new(
+        crate::http::controllers::nginx_upstream::GetNginxConfigurationAction::new(app.clone()),
+    ));
     result
 }

@@ -17,7 +17,7 @@ async fn main() {
     let settings_reader = settings::SettingsReader::new(".ca_api").await;
     let settings_reader = Arc::new(settings_reader);
 
-    let app = Arc::new(AppContext::new(settings_reader));
+    let app = Arc::new(AppContext::new(settings_reader).await);
 
     crate::http::start(&app);
 
