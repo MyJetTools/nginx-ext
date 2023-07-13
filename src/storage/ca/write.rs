@@ -1,6 +1,6 @@
 use openssl::x509::X509;
 
-use crate::app::AppContext;
+use crate::{app::AppContext, storage::nginx::instance::SslCertsPath};
 
 use super::CaPath;
 
@@ -28,7 +28,19 @@ pub async fn write(
         .unwrap();
 
     let ca_cert_file_name = ca_path.to_cert_file_name();
-    tokio::fs::write(ca_cert_file_name.as_str(), cert_ca.to_pem().unwrap())
+
+    let cert_ca = cert_ca.to_pem().unwrap();
+    tokio::fs::write(ca_cert_file_name.as_str(), cert_ca.as_slice())
+        .await
+        .unwrap();
+
+    let ssl_path = SslCertsPath::new(&app.settings_reader).await;
+
+    tokio::fs::write(ssl_path.generate_ca_cert_file(ca_cn), cert_ca.as_slice())
+        .await
+        .unwrap();
+
+    tokio::fs::write(ca_cert_file_name.as_str(), cert_ca.as_slice())
         .await
         .unwrap();
 

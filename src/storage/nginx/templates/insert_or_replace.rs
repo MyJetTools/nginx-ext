@@ -11,5 +11,5 @@ pub async fn insert_or_replace(app: &AppContext, id: String, lines: Vec<String>)
 
     templates.insert(id, lines);
     super::super::save(&app.settings_reader, &nginx_content).await;
-    super::super::instance::generate_config_file(&app, &nginx_content).await;
+    crate::flows::generate_nginx_config_and_reload_nginx(&app).await;
 }

@@ -8,7 +8,7 @@ pub async fn delete(app: &AppContext, name: &str) -> bool {
 
         if result {
             super::super::save(&app.settings_reader, &nginx_content).await;
-            super::super::instance::generate_config_file(&app, &nginx_content).await;
+            crate::flows::generate_nginx_config_and_reload_nginx(&app).await;
         }
         return result;
     }

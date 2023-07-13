@@ -5,6 +5,8 @@ use serde::*;
 use std::collections::HashMap;
 pub use upstreams::*;
 
+use crate::ssl_certificates::SslCertificates;
+
 #[derive(Default, Deserialize, Serialize)]
 pub struct NginxFileContent {
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -44,10 +46,14 @@ impl NginxFileContent {
         }
     }
 
-    pub fn generate_nginx_http_configuration(&self, dest: &mut String) {
+    pub fn generate_nginx_http_configuration(
+        &self,
+        dest: &mut String,
+        ssl_certs: &SslCertificates,
+    ) {
         if let Some(http_configs) = self.http_configs.as_ref() {
             for (domain, http_config) in http_configs {
-                http_config.generate_nginx_configuration(domain, dest, &self.templates);
+                http_config.generate_nginx_configuration(domain, dest, &self.templates, ssl_certs);
             }
         }
     }

@@ -1,6 +1,12 @@
 use tokio::process::Command;
 
-pub async fn reload() -> Result<String, String> {
+use crate::settings::SettingsReader;
+
+pub async fn reload_nginx(settings_reader: &SettingsReader) -> Result<String, String> {
+    if !settings_reader.get_start_nginx().await {
+        return Err("Nginx is not started".to_string());
+    }
+
     let test_output = Command::new("nginx").arg("-t").output().await.unwrap();
 
     println!("Nginx Test result: {:?}", test_output);

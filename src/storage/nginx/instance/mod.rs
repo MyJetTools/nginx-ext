@@ -1,10 +1,10 @@
 mod generate_config_file;
-mod reload;
 pub use generate_config_file::*;
-pub use reload::*;
-mod self_signed_cert;
+mod create_self_signed_ssl_certificate_if_needed;
+mod ssl_certs_path;
 mod write_default_conf;
 mod write_nginx_conf;
-pub use self_signed_cert::*;
+pub use create_self_signed_ssl_certificate_if_needed::*;
+pub use ssl_certs_path::*;
 pub use write_default_conf::*;
 pub use write_nginx_conf::*;

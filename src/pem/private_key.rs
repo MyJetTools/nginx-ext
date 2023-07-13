@@ -10,6 +10,10 @@ impl PemPrivateKey {
     pub fn into_private_key(&self) -> PKey<Private> {
         PKey::private_key_from_pem(self.0.as_slice()).unwrap()
     }
+
+    pub fn as_slice(&self) -> &[u8] {
+        self.0.as_slice()
+    }
 }
 
 impl<'s> Into<PKey<Private>> for &'s PemPrivateKey {

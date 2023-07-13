@@ -1,7 +1,9 @@
 use std::collections::HashMap;
 
-use rust_extensions::StrOrString;
+use rust_extensions::{date_time::DateTimeAsMicroseconds, StrOrString};
 use serde::{Deserialize, Serialize};
+
+use crate::ssl_certificates::SslCertificates;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub enum HttpProtocol {
@@ -51,7 +53,9 @@ impl HttpConfig {
         domain: &str,
         dest: &mut String,
         templates_repo: &Option<HashMap<String, Vec<String>>>,
+        ssl_certs: &SslCertificates,
     ) {
+        let now = DateTimeAsMicroseconds::now();
         dest.push_str("server {\n");
 
         dest.push_str(" listen ");
@@ -67,9 +71,16 @@ impl HttpConfig {
             Some(StrOrString::create_as_str(ssl_cert))
         } else {
             if self.protocol.is_https() {
-                Some(StrOrString::create_as_str(
-                    crate::storage::nginx::instance::SELF_SIGNED_CERT_NAME,
-                ))
+                let cert_by_domain: Option<&crate::ssl_certificates::SslCertificate> =
+                    ssl_certs.get_by_domain(domain, now);
+
+                if let Some(cert) = cert_by_domain {
+                    Some(StrOrString::create_as_str(cert.file_name.as_str()))
+                } else {
+                    Some(StrOrString::create_as_str(
+                        crate::storage::nginx::instance::SELF_SIGNED_CERT_NAME,
+                    ))
+                }
             } else {
                 None
             }

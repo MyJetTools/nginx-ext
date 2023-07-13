@@ -1,25 +1,28 @@
-use crate::pem::*;
-const CERTS_FOLDER: &str = "/etc/nginx/certs";
+use crate::{app::AppContext, pem::*};
+
+use super::SslCertsPath;
 
 pub const SELF_SIGNED_CERT_NAME: &str = "self";
 
-pub async fn create_self_signed_ssl_certificate_if_needed() {
-    let self_cert_file = format!("{CERTS_FOLDER}/{SELF_SIGNED_CERT_NAME}.crt");
-    let self_pk_file = format!("{CERTS_FOLDER}/{SELF_SIGNED_CERT_NAME}.key");
+pub async fn create_self_signed_ssl_certificate_if_needed(app: &AppContext) {
+    let ssl_certs_path = SslCertsPath::new(&app.settings_reader).await;
 
-    let result_cert = tokio::fs::read(self_cert_file.as_str()).await;
-    let result_pk = tokio::fs::read(self_pk_file.as_str()).await;
+    let cert_file_name = ssl_certs_path.generate_certificate_file(SELF_SIGNED_CERT_NAME);
+    let private_key_file_name = ssl_certs_path.generate_private_key_file(SELF_SIGNED_CERT_NAME);
+
+    let result_cert = tokio::fs::read(cert_file_name.as_str()).await;
+    let result_pk = tokio::fs::read(private_key_file_name.as_str()).await;
     if result_cert.is_err() || result_pk.is_err() {
         println!("Self signed cert not found. Generating brand new self signed certificate...");
         let (p_key, cert) = generate_self_signed_ssl_certificate();
 
         let p_key_content: Vec<u8> = p_key.into();
-        tokio::fs::write(self_pk_file, p_key_content.as_slice())
+        tokio::fs::write(private_key_file_name, p_key_content.as_slice())
             .await
             .unwrap();
 
         let cert_content: Vec<u8> = cert.into();
-        tokio::fs::write(self_cert_file, cert_content.as_slice())
+        tokio::fs::write(cert_file_name, cert_content.as_slice())
             .await
             .unwrap();
     }

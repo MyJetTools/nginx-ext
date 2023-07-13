@@ -33,6 +33,7 @@ async fn handle_request(
 ) -> Result<HttpOkResult, HttpFailResult> {
     let result = crate::storage::nginx::http_configs::delete(&action.app, &input_data.domain).await;
     if result {
+        crate::flows::generate_nginx_config_and_reload_nginx(&action.app).await?;
         return HttpOutput::Empty.into_ok_result(true).into();
     } else {
         return Err(HttpFailResult::as_forbidden(

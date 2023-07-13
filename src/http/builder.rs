@@ -45,6 +45,7 @@ pub fn build_controllers(app: &Arc<AppContext>) -> ControllersMiddleware {
         crate::http::controllers::ca::DownloadPrivateKeyAction::new(app.clone()),
     ));
 
+    //NGINX Upstream Controller
     result.register_post_action(Arc::new(
         crate::http::controllers::nginx_upstream::InsertOrReplaceUpstreamAction::new(app.clone()),
     ));
@@ -56,6 +57,8 @@ pub fn build_controllers(app: &Arc<AppContext>) -> ControllersMiddleware {
     result.register_get_action(Arc::new(
         crate::http::controllers::nginx_upstream::GetNginxConfigurationAction::new(app.clone()),
     ));
+
+    // NGINX HTTP Controller
 
     result.register_post_action(Arc::new(
         crate::http::controllers::nginx_http::InsertOrReplaceAction::new(app.clone()),
@@ -73,7 +76,16 @@ pub fn build_controllers(app: &Arc<AppContext>) -> ControllersMiddleware {
         crate::http::controllers::nginx_http::DeleteHttpConfigAction::new(app.clone()),
     ));
 
-    result.register_post_action(Arc::new(crate::http::controllers::nginx::ReloadAction));
+    // NGINX Controller
+    result.register_post_action(Arc::new(
+        crate::http::controllers::nginx::ReloadAction::new(app.clone()),
+    ));
+
+    result.register_post_action(Arc::new(
+        crate::http::controllers::nginx::GenerateConfigFileAction::new(app.clone()),
+    ));
+
+    // NGINX Templates Controller
 
     result.register_post_action(Arc::new(
         crate::http::controllers::nginx_templates::InsertOrReplaceAction::new(app.clone()),
@@ -81,6 +93,16 @@ pub fn build_controllers(app: &Arc<AppContext>) -> ControllersMiddleware {
 
     result.register_delete_action(Arc::new(
         crate::http::controllers::nginx_templates::DeleteTemplateAction::new(app.clone()),
+    ));
+
+    // SSL Controller
+
+    result.register_post_action(Arc::new(
+        crate::http::controllers::ssl::UploadSslCertificateAction::new(app.clone()),
+    ));
+
+    result.register_get_action(Arc::new(
+        crate::http::controllers::ssl::GetListOfCertsAction::new(app.clone()),
     ));
 
     result

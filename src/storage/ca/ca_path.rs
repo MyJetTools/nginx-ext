@@ -18,7 +18,7 @@ pub struct CaPath {
 
 impl CaPath {
     pub async fn new(app: &AppContext, ca_cn: &str) -> Self {
-        let mut path = app.settings_reader.get_data_path().await;
+        let mut path = app.settings_reader.get_ca_data_path().await;
         path.push_str(ca_cn);
         Self { path }
     }

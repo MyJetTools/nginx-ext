@@ -2,12 +2,16 @@ use serde::{Deserialize, Serialize};
 
 #[derive(my_settings_reader::SettingsModel, Serialize, Deserialize, Debug, Clone)]
 pub struct SettingsModel {
-    #[serde(rename = "DataPath")]
-    pub data_path: String,
+    #[serde(rename = "NginxDataPath")]
+    pub nginx_data_path: String,
+    #[serde(rename = "CaDataPath")]
+    pub ca_data_path: String,
     #[serde(rename = "StartNginx")]
     pub start_nginx: bool,
     #[serde(rename = "NginxConfigFileName")]
     pub nginx_config_file_name: String,
+    #[serde(rename = "NginxCertificatesPath")]
+    pub nginx_certs_path: String,
 }
 
 impl SettingsReader {
@@ -15,9 +19,19 @@ impl SettingsReader {
         let read_access = self.settings.read().await;
         read_access.start_nginx
     }
-    pub async fn get_data_path(&self) -> String {
+    pub async fn get_ca_data_path(&self) -> String {
         let read_access = self.settings.read().await;
-        format_path(read_access.data_path.as_str())
+        format_path(read_access.ca_data_path.as_str())
+    }
+
+    pub async fn get_nginx_data_path(&self) -> String {
+        let read_access = self.settings.read().await;
+        format_path(read_access.nginx_data_path.as_str())
+    }
+
+    pub async fn get_nginx_certs_path(&self) -> String {
+        let read_access = self.settings.read().await;
+        format_path(read_access.nginx_certs_path.as_str())
     }
 
     pub async fn get_nginx_config_file_name(&self) -> String {

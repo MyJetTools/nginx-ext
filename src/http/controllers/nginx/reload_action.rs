@@ -1,4 +1,8 @@
+use std::sync::Arc;
+
 use my_http_server::{HttpContext, HttpFailResult, HttpOkResult, HttpOutput};
+
+use crate::app::AppContext;
 
 #[my_http_server_swagger::http_route(
     method: "POST",
@@ -10,13 +14,21 @@ use my_http_server::{HttpContext, HttpFailResult, HttpOkResult, HttpOutput};
         {status_code: 202, description: "Ok result"},
     ]
 )]
-pub struct ReloadAction;
+pub struct ReloadAction {
+    app: Arc<AppContext>,
+}
+
+impl ReloadAction {
+    pub fn new(app: Arc<AppContext>) -> Self {
+        Self { app }
+    }
+}
 
 async fn handle_request(
-    _action: &ReloadAction,
+    action: &ReloadAction,
     _ctx: &HttpContext,
 ) -> Result<HttpOkResult, HttpFailResult> {
-    match crate::storage::nginx::instance::reload().await {
+    match crate::flows::reload_nginx(&action.app.settings_reader).await {
         Ok(result) => {
             return HttpOutput::as_text(result).into_ok_result(true).into();
         }

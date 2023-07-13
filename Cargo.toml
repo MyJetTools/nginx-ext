@@ -40,3 +40,5 @@ hex = "*"
 base64 = "*"
 rcgen = "*"
 pem = "*"
+chrono = "*"
+uuid = { version = "*", features = ["v4"] }
