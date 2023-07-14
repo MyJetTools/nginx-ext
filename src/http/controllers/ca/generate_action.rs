@@ -3,7 +3,7 @@ use std::sync::Arc;
 use my_http_server::{HttpContext, HttpFailResult, HttpOkResult, HttpOutput};
 use my_http_server_swagger::MyHttpInput;
 
-use crate::app::AppContext;
+use crate::{app::AppContext, pem::PemCertInfo};
 
 #[my_http_server_swagger::http_route(
     method: "POST",
@@ -30,12 +30,14 @@ async fn handle_request(
     input_data: GenerateCaInputModel,
     _ctx: &HttpContext,
 ) -> Result<HttpOkResult, HttpFailResult> {
-    crate::flows::generate_ca(
+    crate::flows::ca::generate(
         &action.app,
-        &input_data.ca_name,
-        &input_data.organization,
-        &input_data.country_code,
-        &input_data.city,
+        PemCertInfo {
+            ca_cn: input_data.ca_name,
+            organization: input_data.organization,
+            country_code: input_data.country_code,
+            city: input_data.city,
+        },
     )
     .await;
 

@@ -1,5 +1,5 @@
 const CA_CERT_FILE_NAME: &str = "ca_cert.pem";
-const CA_PUBLIC_KEY_FILE_NAME: &str = "ca_public_key.pem";
+
 const CA_PRIVATE_KEY_FILE_NAME: &str = "ca_private_key.pem";
 
 const SERIAL_FILE_NAME: &str = "serial";
@@ -108,10 +108,6 @@ impl CaDataPath {
            self.into_file_name(CA_PUBLIC_KEY_FILE_NAME)
        }
     */
-    pub fn to_public_key_file_name(&self) -> String {
-        let result = self.clone();
-        result.into_file_name(CA_PUBLIC_KEY_FILE_NAME)
-    }
 }
 
 impl Into<String> for CaDataPath {

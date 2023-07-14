@@ -29,9 +29,19 @@ pub fn build_controllers(app: &Arc<AppContext>) -> ControllersMiddleware {
         crate::http::controllers::certificates::DownloadPemCertificateAction::new(app.clone()),
     ));
 
+    //CA Controller
+
+    result.register_post_action(Arc::new(crate::http::controllers::ca::CheckCaAction::new(
+        app.clone(),
+    )));
+
     result.register_post_action(Arc::new(
         crate::http::controllers::ca::GenerateCaAction::new(app.clone()),
     ));
+
+    result.register_post_action(Arc::new(crate::http::controllers::ca::ImportCaAction::new(
+        app.clone(),
+    )));
 
     result.register_get_action(Arc::new(
         crate::http::controllers::ca::DownloadCertAction::new(app.clone()),

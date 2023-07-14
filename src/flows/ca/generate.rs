@@ -8,32 +8,25 @@ use openssl::{
     x509::{extension::BasicConstraints, X509NameBuilder, X509},
 };
 
-use crate::app::AppContext;
+use crate::{app::AppContext, pem::PemCertInfo};
 
-pub async fn generate_ca(
-    app: &Arc<AppContext>,
-    common_name: &str,
-    organization_name: &str,
-    country_code: &str,
-    city: &str,
-) {
+pub async fn generate(app: &Arc<AppContext>, cert_info: PemCertInfo) {
     // Generate a 2048 bit RSA private key for the CA
     let rsa_ca = Rsa::generate(4096).unwrap();
-    let pkey_ca = PKey::from_rsa(rsa_ca).unwrap();
-
-    let public_key_pem = pkey_ca.public_key_to_pem().unwrap();
-    let private_key_pem = pkey_ca.private_key_to_pem_pkcs8().unwrap();
+    let p_key_ca = PKey::from_rsa(rsa_ca).unwrap();
 
     // Build the X509 name for the CA
     let mut builder = X509NameBuilder::new().unwrap();
     builder
-        .append_entry_by_nid(Nid::COMMONNAME, common_name)
+        .append_entry_by_nid(Nid::COMMONNAME, &cert_info.ca_cn)
         .unwrap();
-    builder.append_entry_by_text("C", country_code).unwrap();
-
-    builder.append_entry_by_text("L", city).unwrap();
     builder
-        .append_entry_by_text("O", organization_name)
+        .append_entry_by_text("C", &cert_info.country_code)
+        .unwrap();
+
+    builder.append_entry_by_text("L", &cert_info.city).unwrap();
+    builder
+        .append_entry_by_text("O", &cert_info.organization)
         .unwrap();
     let name_ca = builder.build();
 
@@ -51,26 +44,16 @@ pub async fn generate_ca(
     cert_builder.set_not_before(&not_before).unwrap();
     let not_after = openssl::asn1::Asn1Time::days_from_now(365).unwrap();
     cert_builder.set_not_after(&not_after).unwrap();
-    cert_builder.set_pubkey(&pkey_ca).unwrap();
+    cert_builder.set_pubkey(&p_key_ca).unwrap();
 
     cert_builder
         .append_extension(BasicConstraints::new().critical().ca().build().unwrap())
         .unwrap();
 
     cert_builder
-        .sign(&pkey_ca, MessageDigest::sha256())
+        .sign(&p_key_ca, MessageDigest::sha256())
         .unwrap();
     let cert_ca = cert_builder.build();
 
-    crate::storage::ca::write(
-        app,
-        common_name,
-        country_code,
-        organization_name,
-        city,
-        cert_ca,
-        public_key_pem,
-        private_key_pem,
-    )
-    .await
+    crate::storage::ca::write(app, &cert_info, cert_ca.into(), p_key_ca.into()).await
 }

@@ -31,6 +31,8 @@ async fn handle_request(
     _ctx: &HttpContext,
 ) -> Result<HttpOkResult, HttpFailResult> {
     let (name, config) = input_data.into_storage_model()?;
-    crate::storage::nginx::http_configs::insert_or_replace(&action.app, name, config).await;
+
+    crate::flows::nginx::http_config::insert_or_replace(&action.app, name, config).await?;
+
     return HttpOutput::Empty.into_ok_result(true).into();
 }

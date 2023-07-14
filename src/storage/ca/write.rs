@@ -1,22 +1,19 @@
-use openssl::x509::X509;
-
-use crate::app::AppContext;
+use crate::{
+    app::AppContext,
+    pem::{PemCertInfo, PemCertificate, PemPrivateKey},
+};
 
 pub async fn write(
     app: &AppContext,
-    ca_cn: &str,
-    country_code: &str,
-    organization_name: &str,
-    city: &str,
-    cert_ca: X509,
-    public_key: Vec<u8>,
-    private_key: Vec<u8>,
+    cert_info: &PemCertInfo,
+    cert_ca: PemCertificate,
+    private_key: PemPrivateKey,
 ) {
     let ca_path = app
         .settings_reader
         .get_config_path()
         .await
-        .into_ca_data_path(ca_cn);
+        .into_ca_data_path(&cert_info.ca_cn);
 
     tokio::fs::create_dir(ca_path.as_str()).await.unwrap();
 
@@ -32,7 +29,6 @@ pub async fn write(
 
     let ca_cert_file_name = ca_path.to_cert_file_name();
 
-    let cert_ca = cert_ca.to_pem().unwrap();
     tokio::fs::write(ca_cert_file_name.as_str(), cert_ca.as_slice())
         .await
         .unwrap();
@@ -40,16 +36,19 @@ pub async fn write(
     //let ssl_path = SslCertsPath::new(&app.settings_reader).await;
     let nginx_path = app.settings_reader.get_nginx_path().await;
 
-    tokio::fs::write(nginx_path.get_ca_cert_file(ca_cn), cert_ca.as_slice())
-        .await
-        .unwrap();
+    tokio::fs::write(
+        nginx_path.get_ca_cert_file(&cert_info.ca_cn),
+        cert_ca.as_slice(),
+    )
+    .await
+    .unwrap();
 
     tokio::fs::write(ca_cert_file_name.as_str(), cert_ca.as_slice())
         .await
         .unwrap();
 
     let ca_private_key_file_name = ca_path.to_private_key_file_name();
-    tokio::fs::write(ca_private_key_file_name.as_str(), private_key)
+    tokio::fs::write(ca_private_key_file_name.as_str(), private_key.as_slice())
         .await
         .unwrap();
 
@@ -77,14 +76,14 @@ organizationName = {organization_name}
 localityName = {city}
 "#,
             path = ca_path.as_str(),
+            ca_cn = cert_info.ca_cn,
+            country_code = cert_info.country_code,
+            organization_name = cert_info.organization,
+            city = cert_info.city,
         ),
     )
     .await
     .unwrap();
-
-    tokio::fs::write(ca_path.to_public_key_file_name(), public_key)
-        .await
-        .unwrap();
 
     tokio::fs::write(ca_path.to_index_attr_file_name(), "unique_subject = yes")
         .await

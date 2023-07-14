@@ -46,11 +46,11 @@ http {{
     #gzip  on;
 
     include {the_nginx_path_str}conf.d/*.conf;
-    include {path_to_generate_http_content}/*.conf;
+    include {path_to_generate_http_content}*.conf;
 }}
 
 stream {{
-    include {path_to_generate_tcp_content}/*.stream;
+    include {path_to_generate_tcp_content}*.stream;
 }}
     "#
     )

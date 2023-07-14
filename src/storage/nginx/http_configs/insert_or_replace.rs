@@ -10,5 +10,4 @@ pub async fn insert_or_replace(app: &AppContext, domain: String, config: HttpCon
     let http_configs = nginx_content.http_configs.as_mut().unwrap();
     http_configs.insert(domain, config);
     super::super::save(&app.settings_reader, &nginx_content).await;
-    crate::flows::generate_nginx_config_and_reload_nginx(&app).await;
 }
