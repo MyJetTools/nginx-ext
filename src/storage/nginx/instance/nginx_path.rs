@@ -62,7 +62,7 @@ impl NginxPath {
 
     pub fn get_auto_generated_config_file_name(&self) -> String {
         let mut result: String = self.path.clone();
-        result.push_str("sites-enabled/auth-generated.conf");
+        result.push_str("sites-enabled/auto-generated.conf");
         result
     }
 }
