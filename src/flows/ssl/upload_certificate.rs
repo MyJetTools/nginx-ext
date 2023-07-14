@@ -4,7 +4,6 @@ use crate::{
     app::AppContext,
     flows::FlowError,
     pem::{PemCertificate, PemPrivateKey},
-    storage::nginx::instance::SslCertsPath,
 };
 
 pub async fn upload_certificate(
@@ -34,21 +33,21 @@ pub async fn upload_certificate(
         }
     };
 
-    let ssl_cert_path = SslCertsPath::new(&app.settings_reader).await;
+    let nginx_path = app.settings_reader.get_nginx_path().await;
 
     let mut file_name = expires.to_compact_date_time_string();
     file_name.push('.');
     file_name.push_str(domain.replace("*", "%").as_str());
 
     tokio::fs::write(
-        ssl_cert_path.generate_private_key_file(file_name.as_str()),
+        nginx_path.get_ssl_private_key_file_path(file_name.as_str()),
         private_key.as_slice(),
     )
     .await
     .unwrap();
 
     tokio::fs::write(
-        ssl_cert_path.generate_certificate_file(file_name.as_str()),
+        nginx_path.get_ssl_cert_file_path(file_name.as_str()),
         cert.as_slice(),
     )
     .await

@@ -43,6 +43,7 @@ async fn handle_request(
                         port: config.port,
                         protocol: config.protocol.to_string().to_string(),
                         ssl_certificate: config.ssl_cert.clone(),
+                        client_cert_ca_cn: config.ca_cn.clone(),
 
                         templates: config.templates.clone(),
                         locations: config

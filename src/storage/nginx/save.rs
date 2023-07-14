@@ -3,7 +3,11 @@ use crate::settings::SettingsReader;
 use super::models::NginxFileContent;
 
 pub async fn save(settings_reader: &SettingsReader, content: &NginxFileContent) {
-    let file = super::get_nginx_file_name(settings_reader).await;
+    let ca_path = settings_reader.get_config_path().await;
+    let file_name = ca_path.into_nginx_yaml_config_file_name();
+
     let content = serde_yaml::to_string(content).unwrap();
-    tokio::fs::write(file, content.as_bytes()).await.unwrap();
+    tokio::fs::write(file_name, content.as_bytes())
+        .await
+        .unwrap();
 }

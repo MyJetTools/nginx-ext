@@ -28,13 +28,15 @@ async fn handle_request(
     action: &GenerateConfigFileAction,
     _ctx: &HttpContext,
 ) -> Result<HttpOkResult, HttpFailResult> {
+    let nginx_config = action.app.settings_reader.get_nginx_path().await;
     let ssl_certs = crate::flows::ssl::get_list_of_certificates(&action.app).await;
     let config = {
         let content_file = action.app.nginx_file_content.read().await;
+
         crate::storage::nginx::instance::generate_config_file(
-            &action.app,
             &content_file,
             &ssl_certs,
+            &nginx_config,
         )
         .await
     };

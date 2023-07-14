@@ -1,8 +1,10 @@
-pub async fn write_default_conf() {
-    let file = "/etc/nginx/sites-enabled/default-site.conf";
+use super::NginxPath;
 
+pub async fn write_default_conf(nginx_path: &NginxPath) {
     let content = get_default_conf_content();
-    tokio::fs::write(file, content).await.unwrap();
+    tokio::fs::write(nginx_path.get_default_configuration_file(), content)
+        .await
+        .unwrap();
 }
 
 pub fn get_default_conf_content() -> &'static str {

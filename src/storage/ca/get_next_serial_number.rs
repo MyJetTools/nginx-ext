@@ -4,11 +4,13 @@ use crate::{
 };
 
 pub async fn get_next_serial_number(app: &AppContext, ca_cn: &str) -> u32 {
-    let serial_file_name = app
+    let ca_path = app
         .settings_reader
-        .get_ca_data_path(ca_cn.into())
+        .get_config_path()
         .await
-        .into_serial_file_name();
+        .into_ca_data_path(ca_cn);
+
+    let serial_file_name = ca_path.into_serial_file_name();
 
     let content = tokio::fs::read_to_string(serial_file_name.as_str())
         .await

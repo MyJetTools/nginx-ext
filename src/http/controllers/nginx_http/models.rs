@@ -19,6 +19,10 @@ pub struct HttpConfigurationHttpInputContract {
     #[serde(rename = "sslCertificate")]
     pub ssl_certificate: Option<String>,
 
+    #[http_body(name="clientCertCaCn" description = "Client Certificate CA Common Name")]
+    #[serde(rename = "clientCertCaCn")]
+    pub client_cert_ca_cn: Option<String>,
+
     #[http_body(description = "List of templates")]
     pub templates: Option<Vec<String>>,
 
@@ -52,6 +56,7 @@ impl HttpConfigurationHttpInputContract {
                 None
             },
             templates: self.templates,
+            ca_cn: self.client_cert_ca_cn,
             locations: self.locations.into_iter().map(|x| x.into()).collect(),
         };
 

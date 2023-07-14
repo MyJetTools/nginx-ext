@@ -1,9 +1,9 @@
 use crate::{app::AppContext, pem::PemPrivateKey};
 
-use super::CertPath;
+use super::ClientCertPath;
 
 pub async fn load_pem_private_key(app: &AppContext, ca_cn: &str, email: &str) -> PemPrivateKey {
-    let cert_path = CertPath::new(app, ca_cn, email)
+    let cert_path = ClientCertPath::new(app, ca_cn, email)
         .await
         .into_private_key_file_name();
 

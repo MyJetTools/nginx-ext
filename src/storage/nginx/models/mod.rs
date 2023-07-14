@@ -7,6 +7,8 @@ pub use upstreams::*;
 
 use crate::ssl_certificates::SslCertificates;
 
+use super::instance::NginxPath;
+
 #[derive(Default, Deserialize, Serialize)]
 pub struct NginxFileContent {
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -50,10 +52,17 @@ impl NginxFileContent {
         &self,
         dest: &mut String,
         ssl_certs: &SslCertificates,
+        nginx_path: &NginxPath,
     ) {
         if let Some(http_configs) = self.http_configs.as_ref() {
             for (domain, http_config) in http_configs {
-                http_config.generate_nginx_configuration(domain, dest, &self.templates, ssl_certs);
+                http_config.generate_nginx_configuration(
+                    domain,
+                    dest,
+                    &self.templates,
+                    ssl_certs,
+                    nginx_path,
+                );
             }
         }
     }

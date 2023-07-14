@@ -1,20 +1,25 @@
-use crate::{app::AppContext, storage::ca::CaPath};
+use crate::{app::AppContext, storage::ca::CaDataPath};
 pub const CERT_FILE_NAME: &str = "cert.pem";
 pub const PUBLIC_KEY_FILE_NAME: &str = "public_key.pem";
 pub const PRIVATE_KEY_FILE_NAME: &str = "private_key.pem";
 
 #[derive(Clone)]
-pub struct CertPath {
+pub struct ClientCertPath {
     path: String,
 }
 
-impl CertPath {
+impl ClientCertPath {
     pub async fn new(app: &AppContext, cn_name: &str, email: &str) -> Self {
-        let path = app.settings_reader.get_ca_data_path(cn_name.into()).await;
-        Self::from_ca_path(path, email)
+        let ca_path = app
+            .settings_reader
+            .get_config_path()
+            .await
+            .into_ca_data_path(cn_name);
+
+        Self::from_ca_path(ca_path, email)
     }
 
-    pub fn from_ca_path(path: CaPath, email: &str) -> Self {
+    pub fn from_ca_path(path: CaDataPath, email: &str) -> Self {
         let mut path: String = path.into();
         let sub_path = email.replace("@", "_");
 

@@ -11,17 +11,13 @@ const INDEX_ATTR_FILE_NAME: &str = "index.txt.attr";
 const CONFIG_FILE_NAME: &str = "openssl.cnf";
 
 #[derive(Clone)]
-pub struct CaPath {
+pub struct CaDataPath {
     path: String,
 }
 
-impl CaPath {
+impl CaDataPath {
     pub fn new(mut path: String, ca_cn: &str) -> Self {
         path.push_str(ca_cn);
-        Self { path }
-    }
-
-    pub fn new_root(path: String) -> Self {
         Self { path }
     }
 
@@ -118,7 +114,7 @@ impl CaPath {
     }
 }
 
-impl Into<String> for CaPath {
+impl Into<String> for CaDataPath {
     fn into(self) -> String {
         self.path
     }

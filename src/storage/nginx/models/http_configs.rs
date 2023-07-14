@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use rust_extensions::{date_time::DateTimeAsMicroseconds, StrOrString};
 use serde::{Deserialize, Serialize};
 
-use crate::ssl_certificates::SslCertificates;
+use crate::{ssl_certificates::SslCertificates, storage::nginx::instance::NginxPath};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub enum HttpProtocol {
@@ -43,6 +43,7 @@ pub struct HttpConfig {
     pub port: u16,
     pub locations: Vec<HttpConfigLocation>,
     pub ssl_cert: Option<String>,
+    pub ca_cn: Option<String>,
 
     pub templates: Option<Vec<String>>,
 }
@@ -54,6 +55,7 @@ impl HttpConfig {
         dest: &mut String,
         templates_repo: &Option<HashMap<String, Vec<String>>>,
         ssl_certs: &SslCertificates,
+        nginx_path: &NginxPath,
     ) {
         let now = DateTimeAsMicroseconds::now();
         dest.push_str("server {\n");
@@ -86,14 +88,26 @@ impl HttpConfig {
             }
         };
 
+        let certs_path = nginx_path.get_certs_path();
+
         if let Some(ssl_cert) = ssl_cert {
-            dest.push_str("\n ssl_certificate   /etc/nginx/certs/");
+            dest.push_str("\n ssl_certificate   ");
+            dest.push_str(certs_path.as_str());
             dest.push_str(ssl_cert.as_str());
             dest.push_str(".crt;\n");
 
-            dest.push_str(" ssl_certificate_key /etc/nginx/certs/");
+            dest.push_str(" ssl_certificate_key ");
+            dest.push_str(certs_path.as_str());
             dest.push_str(ssl_cert.as_str());
             dest.push_str(".key;\n");
+        }
+
+        if let Some(ca_cn) = &self.ca_cn {
+            dest.push_str(" ssl_client_certificate ");
+            dest.push_str(certs_path.as_str());
+            dest.push_str(ca_cn);
+            dest.push_str(ca_cn);
+            dest.push_str(".crt;\n");
         }
 
         dest.push_str("\n access_log off;\n");

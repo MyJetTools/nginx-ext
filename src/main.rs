@@ -5,6 +5,7 @@ use app::AppContext;
 mod app;
 mod base_64;
 
+mod config_path;
 mod flows;
 mod http;
 mod pem;
@@ -23,14 +24,20 @@ async fn main() {
     init_file_system(&app).await;
 
     if app.settings_reader.get_start_nginx().await {
-        crate::storage::nginx::instance::write_nginx_conf().await;
-        crate::storage::nginx::instance::write_default_conf().await;
+        let nginx_path = app.settings_reader.get_nginx_path().await;
+        crate::storage::nginx::instance::write_nginx_conf(&nginx_path).await;
+        crate::storage::nginx::instance::write_default_conf(&nginx_path).await;
 
         let ssl_certs = crate::flows::ssl::get_list_of_certificates(&app).await;
 
         {
             let content = app.nginx_file_content.read().await;
-            crate::storage::nginx::instance::generate_config_file(&app, &content, &ssl_certs).await;
+            crate::storage::nginx::instance::generate_config_file(
+                &content,
+                &ssl_certs,
+                &nginx_path,
+            )
+            .await;
         }
 
         println!("Starting nginx");
@@ -49,8 +56,10 @@ async fn main() {
 }
 
 async fn init_file_system(app: &AppContext) {
-    let ca_path = app.settings_reader.get_ca_data_path(None).await;
-    tokio::fs::create_dir_all(ca_path.as_str()).await.unwrap();
+    let config_path = app.settings_reader.get_config_path().await;
+    tokio::fs::create_dir_all(config_path.into_ca_path())
+        .await
+        .unwrap();
 
     crate::storage::nginx::instance::create_self_signed_ssl_certificate_if_needed(&app).await;
 }

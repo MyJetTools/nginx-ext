@@ -3,12 +3,14 @@ use rust_extensions::date_time::DateTimeAsMicroseconds;
 use crate::{
     app::AppContext,
     ssl_certificates::{SslCertificate, SslCertificates},
-    storage::nginx::instance::SslCertsPath,
 };
 
 pub async fn get_list_of_certificates(app: &AppContext) -> SslCertificates {
-    let ssl_cert_path = SslCertsPath::new(&app.settings_reader).await;
-    let mut paths = tokio::fs::read_dir(ssl_cert_path.as_str()).await.unwrap(); // Change the path as needed
+    let nginx_path = app.settings_reader.get_nginx_path().await;
+
+    let mut paths = tokio::fs::read_dir(nginx_path.get_certs_path().as_str())
+        .await
+        .unwrap(); // Change the path as needed
 
     let mut result = SslCertificates::new();
     while let Some(path) = paths.next_entry().await.unwrap() {

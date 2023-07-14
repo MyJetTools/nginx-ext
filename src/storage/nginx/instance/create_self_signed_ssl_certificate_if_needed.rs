@@ -1,14 +1,12 @@
 use crate::{app::AppContext, pem::*};
 
-use super::SslCertsPath;
-
 pub const SELF_SIGNED_CERT_NAME: &str = "self";
 
 pub async fn create_self_signed_ssl_certificate_if_needed(app: &AppContext) {
-    let ssl_certs_path = SslCertsPath::new(&app.settings_reader).await;
+    let nginx_path = app.settings_reader.get_nginx_path().await;
 
-    let cert_file_name = ssl_certs_path.generate_certificate_file(SELF_SIGNED_CERT_NAME);
-    let private_key_file_name = ssl_certs_path.generate_private_key_file(SELF_SIGNED_CERT_NAME);
+    let cert_file_name = nginx_path.get_self_signed_cert_file_name();
+    let private_key_file_name = nginx_path.get_self_signed_private_key_file_name();
 
     let result_cert = tokio::fs::read(cert_file_name.as_str()).await;
     let result_pk = tokio::fs::read(private_key_file_name.as_str()).await;

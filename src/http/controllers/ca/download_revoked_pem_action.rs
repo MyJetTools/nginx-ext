@@ -33,8 +33,9 @@ async fn handle_request(
     let file_name = action
         .app
         .settings_reader
-        .get_ca_data_path(input_data.ca_name.as_str().into())
+        .get_config_path()
         .await
+        .into_ca_data_path(input_data.ca_name.as_str())
         .into_crl_file_name();
 
     let content = tokio::fs::read_to_string(file_name).await.unwrap();

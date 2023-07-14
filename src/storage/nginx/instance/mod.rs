@@ -1,10 +1,10 @@
 mod generate_config_file;
 pub use generate_config_file::*;
 mod create_self_signed_ssl_certificate_if_needed;
-mod ssl_certs_path;
+mod nginx_path;
 mod write_default_conf;
 mod write_nginx_conf;
 pub use create_self_signed_ssl_certificate_if_needed::*;
-pub use ssl_certs_path::*;
+pub use nginx_path::*;
 pub use write_default_conf::*;
 pub use write_nginx_conf::*;

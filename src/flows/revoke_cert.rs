@@ -1,11 +1,15 @@
 use tokio::process::Command;
 
-use crate::{app::AppContext, storage::cert::CertPath};
+use crate::{app::AppContext, storage::cert::ClientCertPath};
 
 use super::FlowError;
 
 pub async fn revoke_cert(app: &AppContext, ca_cn: &str, email: &str) -> Result<(), FlowError> {
-    let ca_path = app.settings_reader.get_ca_data_path(ca_cn.into()).await;
+    let ca_path = app
+        .settings_reader
+        .get_config_path()
+        .await
+        .into_ca_data_path(ca_cn);
 
     let ca_private_key_file_name = ca_path.to_private_key_file_name();
 
@@ -14,7 +18,7 @@ pub async fn revoke_cert(app: &AppContext, ca_cn: &str, email: &str) -> Result<(
 
     let crl_pem_file = ca_path.to_crl_file_name();
 
-    let cert_path = CertPath::from_ca_path(ca_path, email);
+    let cert_path = ClientCertPath::from_ca_path(ca_path, email);
 
     //openssl ca -config ./openssl.cnf -keyfile ca_private.key -cert ca_cert.pem -revoke cert_to_revoke.pem
 

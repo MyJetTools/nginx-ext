@@ -1,13 +1,13 @@
-use crate::{
-    app::AppContext, ssl_certificates::SslCertificates, storage::nginx::models::NginxFileContent,
-};
+use crate::{ssl_certificates::SslCertificates, storage::nginx::models::NginxFileContent};
+
+use super::NginxPath;
 
 pub async fn generate_config_file(
-    app: &AppContext,
     content: &NginxFileContent,
     ssl_certs: &SslCertificates,
+    nginx_path: &NginxPath,
 ) -> String {
-    let file = app.settings_reader.get_nginx_config_file_name().await;
+    let file = nginx_path.get_auto_generated_config_file_name();
 
     let mut result = String::new();
 
@@ -15,7 +15,7 @@ pub async fn generate_config_file(
     content.generate_nginx_up_streams_configuration(&mut result);
 
     result.push_str("# Http configurations  \n");
-    content.generate_nginx_http_configuration(&mut result, ssl_certs);
+    content.generate_nginx_http_configuration(&mut result, ssl_certs, nginx_path);
 
     tokio::fs::write(file, result.as_str()).await.unwrap();
 

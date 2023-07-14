@@ -1,7 +1,10 @@
-pub async fn write_nginx_conf() {
-    let file = "/etc/nginx/nginx.conf";
+use super::NginxPath;
+
+pub async fn write_nginx_conf(nginx_path: &NginxPath) {
     let content = generate_nginx_conf_content();
-    tokio::fs::write(file, content).await.unwrap();
+    tokio::fs::write(nginx_path.get_config_file(), content)
+        .await
+        .unwrap();
 }
 
 pub fn generate_nginx_conf_content() -> &'static str {
