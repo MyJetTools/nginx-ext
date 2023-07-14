@@ -2,7 +2,7 @@ use super::NginxPath;
 
 pub async fn write_default_conf(nginx_path: &NginxPath) {
     let content = get_default_conf_content();
-    tokio::fs::write(nginx_path.get_default_configuration_file(), content)
+    tokio::fs::write(nginx_path.get_default_http_configuration_file(), content)
         .await
         .unwrap();
 }

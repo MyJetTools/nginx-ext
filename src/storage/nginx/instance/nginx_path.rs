@@ -8,6 +8,10 @@ impl NginxPath {
         Self { path }
     }
 
+    pub fn as_str(&self) -> &str {
+        self.path.as_str()
+    }
+
     pub fn get_certs_path(&self) -> String {
         let mut result = self.path.clone();
         result.push_str("certs/");
@@ -54,15 +58,29 @@ impl NginxPath {
         result
     }
 
-    pub fn get_default_configuration_file(&self) -> String {
+    // Generated Http Content
+    pub fn get_path_to_generate_http_content(&self) -> String {
         let mut result = self.path.clone();
-        result.push_str("sites-enabled/default-site.conf");
+        result.push_str("sites-enabled/");
+        result
+    }
+
+    pub fn get_default_http_configuration_file(&self) -> String {
+        let mut result = self.get_path_to_generate_http_content();
+        result.push_str("default-site.conf");
         result
     }
 
     pub fn get_auto_generated_config_file_name(&self) -> String {
-        let mut result: String = self.path.clone();
-        result.push_str("sites-enabled/auto-generated.conf");
+        let mut result = self.get_path_to_generate_http_content();
+        result.push_str("auto-generated.conf");
+        result
+    }
+
+    // Generated Tcp Content
+    pub fn get_path_to_generate_tcp_content(&self) -> String {
+        let mut result = self.path.clone();
+        result.push_str("streams/");
         result
     }
 }
