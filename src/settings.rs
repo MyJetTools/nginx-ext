@@ -19,7 +19,7 @@ impl SettingsReader {
     }
     pub async fn get_config_path(&self) -> ConfigPath {
         let read_access = self.settings.read().await;
-        ConfigPath::new(format_path(&read_access.nginx_path.as_str()))
+        ConfigPath::new(format_path(&read_access.config_path.as_str()))
     }
 
     pub async fn get_nginx_path(&self) -> NginxPath {
