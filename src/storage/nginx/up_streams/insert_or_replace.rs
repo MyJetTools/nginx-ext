@@ -17,5 +17,5 @@ pub async fn insert_or_replace(
 
     upstreams.insert(name, routes);
     super::super::save(&app.settings_reader, &nginx_content).await;
-    crate::flows::generate_nginx_config_and_reload_nginx(&app).await;
+    crate::flows::generate_nginx_config_and_reload_nginx(&app, &nginx_content).await;
 }

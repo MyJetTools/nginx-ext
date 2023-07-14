@@ -10,7 +10,8 @@ pub async fn insert_or_replace(
     }
 
     crate::storage::nginx::http_configs::insert_or_replace(&app, name, config).await;
-    crate::flows::generate_nginx_config_and_reload_nginx(&app).await?;
+    let nginx_content = app.nginx_file_content.write().await;
+    crate::flows::generate_nginx_config_and_reload_nginx(&app, &nginx_content).await?;
 
     Ok(())
 }
