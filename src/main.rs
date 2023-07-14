@@ -20,7 +20,7 @@ async fn main() {
 
     let app = Arc::new(AppContext::new(settings_reader).await);
 
-    crate::storage::nginx::instance::create_self_signed_ssl_certificate_if_needed(&app).await;
+    init_file_system(&app).await;
 
     if app.settings_reader.get_start_nginx().await {
         crate::storage::nginx::instance::write_nginx_conf().await;
@@ -46,4 +46,11 @@ async fn main() {
     crate::http::start(&app);
 
     app.app_states.wait_until_shutdown().await;
+}
+
+async fn init_file_system(app: &AppContext) {
+    let ca_path = app.settings_reader.get_ca_data_path(None).await;
+    tokio::fs::create_dir_all(ca_path.as_str()).await.unwrap();
+
+    crate::storage::nginx::instance::create_self_signed_ssl_certificate_if_needed(&app).await;
 }

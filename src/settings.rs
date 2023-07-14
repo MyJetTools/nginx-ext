@@ -1,5 +1,7 @@
 use serde::{Deserialize, Serialize};
 
+use crate::storage::ca::CaPath;
+
 #[derive(my_settings_reader::SettingsModel, Serialize, Deserialize, Debug, Clone)]
 pub struct SettingsModel {
     #[serde(rename = "NginxDataPath")]
@@ -19,9 +21,16 @@ impl SettingsReader {
         let read_access = self.settings.read().await;
         read_access.start_nginx
     }
-    pub async fn get_ca_data_path(&self) -> String {
+    pub async fn get_ca_data_path(&self, ca_cn: Option<&str>) -> CaPath {
         let read_access = self.settings.read().await;
-        format_path(read_access.ca_data_path.as_str())
+
+        let path = format_path(read_access.ca_data_path.as_str());
+
+        if let Some(ca_cn) = ca_cn {
+            CaPath::new(path, ca_cn)
+        } else {
+            CaPath::new_root(path)
+        }
     }
 
     pub async fn get_nginx_data_path(&self) -> String {

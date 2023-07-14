@@ -3,10 +3,12 @@ use crate::{
     to_hex::{FromHex, ToHex},
 };
 
-use super::CaPath;
-
 pub async fn get_next_serial_number(app: &AppContext, ca_cn: &str) -> u32 {
-    let serial_file_name = CaPath::new(app, ca_cn).await.into_serial_file_name();
+    let serial_file_name = app
+        .settings_reader
+        .get_ca_data_path(ca_cn.into())
+        .await
+        .into_serial_file_name();
 
     let content = tokio::fs::read_to_string(serial_file_name.as_str())
         .await

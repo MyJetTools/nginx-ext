@@ -3,10 +3,8 @@ use rust_extensions::slice_of_u8_utils::SliceOfU8Ext;
 
 use crate::app::AppContext;
 
-use super::CaPath;
-
 pub async fn get_509_name(app: &AppContext, cn_name: &str) -> X509Name {
-    let ca_path = CaPath::new(app, cn_name).await;
+    let ca_path = app.settings_reader.get_ca_data_path(cn_name.into()).await;
 
     let content = tokio::fs::read_to_string(ca_path.to_config_file_name())
         .await

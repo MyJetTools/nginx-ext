@@ -10,7 +10,7 @@ pub struct CertPath {
 
 impl CertPath {
     pub async fn new(app: &AppContext, cn_name: &str, email: &str) -> Self {
-        let path = CaPath::new(app, cn_name).await;
+        let path = app.settings_reader.get_ca_data_path(cn_name.into()).await;
         Self::from_ca_path(path, email)
     }
 

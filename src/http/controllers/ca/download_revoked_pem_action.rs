@@ -3,7 +3,7 @@ use std::sync::Arc;
 use my_http_server::{HttpContext, HttpFailResult, HttpOkResult, HttpOutput};
 use my_http_server_swagger::MyHttpInput;
 
-use crate::{app::AppContext, storage::ca::CaPath};
+use crate::app::AppContext;
 
 #[my_http_server_swagger::http_route(
     method: "GET",
@@ -30,7 +30,10 @@ async fn handle_request(
     input_data: DownloadRevokedInputModel,
     _ctx: &HttpContext,
 ) -> Result<HttpOkResult, HttpFailResult> {
-    let file_name = CaPath::new(&action.app, &input_data.ca_name)
+    let file_name = action
+        .app
+        .settings_reader
+        .get_ca_data_path(input_data.ca_name.as_str().into())
         .await
         .into_crl_file_name();
 

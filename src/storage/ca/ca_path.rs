@@ -1,4 +1,3 @@
-use crate::app::AppContext;
 const CA_CERT_FILE_NAME: &str = "ca_cert.pem";
 const CA_PUBLIC_KEY_FILE_NAME: &str = "ca_public_key.pem";
 const CA_PRIVATE_KEY_FILE_NAME: &str = "ca_private_key.pem";
@@ -17,9 +16,12 @@ pub struct CaPath {
 }
 
 impl CaPath {
-    pub async fn new(app: &AppContext, ca_cn: &str) -> Self {
-        let mut path = app.settings_reader.get_ca_data_path().await;
+    pub fn new(mut path: String, ca_cn: &str) -> Self {
         path.push_str(ca_cn);
+        Self { path }
+    }
+
+    pub fn new_root(path: String) -> Self {
         Self { path }
     }
 

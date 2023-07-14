@@ -2,8 +2,6 @@ use openssl::x509::X509;
 
 use crate::{app::AppContext, storage::nginx::instance::SslCertsPath};
 
-use super::CaPath;
-
 pub async fn write(
     app: &AppContext,
     ca_cn: &str,
@@ -14,7 +12,7 @@ pub async fn write(
     public_key: Vec<u8>,
     private_key: Vec<u8>,
 ) {
-    let ca_path = CaPath::new(app, ca_cn).await;
+    let ca_path = app.settings_reader.get_ca_data_path(ca_cn.into()).await;
     tokio::fs::create_dir(ca_path.as_str()).await.unwrap();
 
     let serial_file_name = ca_path.to_serial_file_name();
