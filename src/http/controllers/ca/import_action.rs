@@ -7,7 +7,7 @@ use crate::app::AppContext;
 
 #[my_http_server_swagger::http_route(
     method: "POST",
-    route: "/api/ca/v1/generate",
+    route: "/api/ca/v1/import",
     summary: "Import existing CA",
     description: "Import existing CA",
     controller: "Certificate Authority",
