@@ -5,9 +5,10 @@ pub async fn check_if_we_have_ca_cert(app: &AppContext, ca_cn: &str) -> Result<(
 
     let file = ca_cert_file.get_ca_cert_file(ca_cn);
 
-    let content = tokio::fs::read(file).await;
+    let content = tokio::fs::read(file.as_str()).await;
 
     if content.is_err() {
+        println!("Can not read file: {:?}", file);
         return Err(FlowError::CaNotFound);
     }
 
@@ -18,12 +19,17 @@ pub async fn check_if_we_have_ca_cert(app: &AppContext, ca_cn: &str) -> Result<(
     let info = pem.get_cert_info();
 
     if info.is_err() {
+        println!("Can not read CA info from file: {:?}", file);
         return Err(FlowError::CaNotFound);
     }
 
     let info = info.unwrap();
 
     if info.0 != ca_cn {
+        println!(
+            "CA name in file is is {} but we are requesting info from ca: {} from file {}",
+            info.0, file, ca_cn
+        );
         return Err(FlowError::CaNotFound);
     }
 
