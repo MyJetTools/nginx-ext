@@ -105,7 +105,7 @@ impl HttpConfig {
         if let Some(ca_cn) = &self.ca_cn {
             dest.push_str(" ssl_client_certificate ");
             dest.push_str(certs_path.as_str());
-            dest.push_str(ca_cn);
+            dest.push_str("ca_");
             dest.push_str(ca_cn);
             dest.push_str(".crt;\n");
         }
