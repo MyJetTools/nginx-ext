@@ -108,6 +108,8 @@ impl HttpConfig {
             dest.push_str("ca_");
             dest.push_str(ca_cn);
             dest.push_str(".crt;\n");
+
+            dest.push_str(" ssl_verify_client on;\n");
         }
 
         dest.push_str("\n access_log off;\n");
