@@ -1,6 +1,6 @@
 use crate::app::AppContext;
 
-pub async fn generate_nginx_http_configuration(app: &AppContext) -> String {
+pub async fn generate(app: &AppContext) -> String {
     let nginx_path = app.settings_reader.get_nginx_path().await;
     let ssl_certs = crate::flows::ssl::get_list_of_certificates(&app).await;
     let mut result = String::new();

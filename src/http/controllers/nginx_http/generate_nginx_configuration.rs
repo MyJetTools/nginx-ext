@@ -27,6 +27,6 @@ async fn handle_request(
     action: &GetNginxConfigurationAction,
     _ctx: &HttpContext,
 ) -> Result<HttpOkResult, HttpFailResult> {
-    let result = crate::flows::generate_nginx_http_configuration(&action.app).await;
+    let result = crate::flows::nginx::http_config::generate(&action.app).await;
     return HttpOutput::as_text(result).into_ok_result(true).into();
 }
