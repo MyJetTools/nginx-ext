@@ -1,6 +1,6 @@
-use crate::{settings::SettingsReader, storage::model::NginxFileContent};
+use crate::{settings::SettingsReader, storage::model::ConfigFileContent};
 
-pub async fn load(settings_reader: &SettingsReader) -> NginxFileContent {
+pub async fn load(settings_reader: &SettingsReader) -> ConfigFileContent {
     let ca_path = settings_reader.get_config_path().await;
 
     let file_name = ca_path.into_nginx_yaml_config_file_name();
@@ -13,7 +13,7 @@ pub async fn load(settings_reader: &SettingsReader) -> NginxFileContent {
             err
         );
 
-        return NginxFileContent::default();
+        return ConfigFileContent::default();
     }
 
     let content = content.unwrap();

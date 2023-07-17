@@ -47,7 +47,7 @@ async fn init_file_system(app: &AppContext) {
     let ssl_certs = crate::flows::ssl::get_list_of_certificates(&app).await;
 
     {
-        let content = app.nginx_file_content.read().await;
+        let content = app.config_file_content.read().await;
         crate::storage::nginx::instance::generate_config_file(&content, &ssl_certs, &nginx_path)
             .await;
     }

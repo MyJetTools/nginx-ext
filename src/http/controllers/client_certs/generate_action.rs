@@ -10,7 +10,7 @@ use crate::app::AppContext;
     route: "/api/certificates/v1/generate",
     summary: "Generate Client Certificate",
     description: "Generate Client Certificate",
-    controller: "Certificates",
+    controller: "Client Certificates",
     input_data: "GenerateCertificateInputModel",
 
     result:[

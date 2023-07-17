@@ -8,25 +8,25 @@ pub fn build_controllers(app: &Arc<AppContext>) -> ControllersMiddleware {
     let mut result = ControllersMiddleware::new(None, None);
 
     result.register_get_action(Arc::new(
-        crate::http::controllers::certificates::GetListOfRevokedCertificatesAction::new(
+        crate::http::controllers::client_certs::GetListOfRevokedCertificatesAction::new(
             app.clone(),
         ),
     ));
 
     result.register_post_action(Arc::new(
-        crate::http::controllers::certificates::GenerateCertificateAction::new(app.clone()),
+        crate::http::controllers::client_certs::GenerateCertificateAction::new(app.clone()),
     ));
 
     result.register_delete_action(Arc::new(
-        crate::http::controllers::certificates::RevokeCertificateAction::new(app.clone()),
+        crate::http::controllers::client_certs::RevokeCertificateAction::new(app.clone()),
     ));
 
     result.register_get_action(Arc::new(
-        crate::http::controllers::certificates::DownloadCertAction::new(app.clone()),
+        crate::http::controllers::client_certs::DownloadCertAction::new(app.clone()),
     ));
 
     result.register_get_action(Arc::new(
-        crate::http::controllers::certificates::DownloadPemCertificateAction::new(app.clone()),
+        crate::http::controllers::client_certs::DownloadPemCertificateAction::new(app.clone()),
     ));
 
     //CA Controller
@@ -53,6 +53,10 @@ pub fn build_controllers(app: &Arc<AppContext>) -> ControllersMiddleware {
 
     result.register_get_action(Arc::new(
         crate::http::controllers::ca::DownloadPrivateKeyAction::new(app.clone()),
+    ));
+
+    result.register_get_action(Arc::new(
+        crate::http::controllers::ca::GetListOfCaAction::new(app.clone()),
     ));
 
     //NGINX Upstream Controller
@@ -113,6 +117,22 @@ pub fn build_controllers(app: &Arc<AppContext>) -> ControllersMiddleware {
 
     result.register_get_action(Arc::new(
         crate::http::controllers::ssl::GetListOfCertsAction::new(app.clone()),
+    ));
+
+    //Controller CaAccessList
+
+    result.register_post_action(Arc::new(
+        crate::http::controllers::client_certs_accesses::InsertAccessListIfNotExistsAction::new(
+            app.clone(),
+        ),
+    ));
+
+    result.register_get_action(Arc::new(
+        crate::http::controllers::client_certs_accesses::GetAccessListAction::new(app.clone()),
+    ));
+
+    result.register_post_action(Arc::new(
+        crate::http::controllers::client_certs_accesses::AddUserAction::new(app.clone()),
     ));
 
     result

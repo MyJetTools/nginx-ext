@@ -31,7 +31,7 @@ async fn handle_request(
     let nginx_config = action.app.settings_reader.get_nginx_path().await;
     let ssl_certs = crate::flows::ssl::get_list_of_certificates(&action.app).await;
     let config = {
-        let content_file = action.app.nginx_file_content.read().await;
+        let content_file = action.app.config_file_content.read().await;
 
         crate::storage::nginx::instance::generate_config_file(
             &content_file,

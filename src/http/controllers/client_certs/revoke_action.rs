@@ -10,7 +10,7 @@ use crate::app::AppContext;
     route: "/api/certificates/v1/revoke",
     summary: "Revoke certificate",
     description: "Revoke certificate",
-    controller: "Certificates",
+    controller: "Client Certificates",
     input_data: "RevokeClientCertInputModel",
     result:[
         {status_code: 200, description: "Certificate as a text"},

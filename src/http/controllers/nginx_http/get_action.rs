@@ -33,7 +33,7 @@ async fn handle_request(
     _ctx: &HttpContext,
 ) -> Result<HttpOkResult, HttpFailResult> {
     let config = {
-        let read_access = action.app.nginx_file_content.read().await;
+        let read_access = action.app.config_file_content.read().await;
 
         match &read_access.http_configs {
             Some(configs) => {

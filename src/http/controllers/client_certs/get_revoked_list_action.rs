@@ -10,7 +10,7 @@ use crate::{app::AppContext, to_hex::ToHex};
     route: "/api/revoked/v1/list",
     summary: "Get List of revoked certificates",
     description: "Get List of revoked certificates",
-    controller: "Certificates",
+    controller: "Client Certificates",
 
     input_data: "GetRevokedCertsInputModel",
 

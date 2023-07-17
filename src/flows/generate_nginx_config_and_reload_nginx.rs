@@ -1,10 +1,10 @@
-use crate::{app::AppContext, storage::model::NginxFileContent};
+use crate::{app::AppContext, storage::model::ConfigFileContent};
 
 use super::FlowError;
 
 pub async fn generate_nginx_config_and_reload_nginx(
     app: &AppContext,
-    nginx_file_content: &NginxFileContent,
+    nginx_file_content: &ConfigFileContent,
 ) -> Result<String, FlowError> {
     let ssl_certs = super::ssl::get_list_of_certificates(app).await;
 

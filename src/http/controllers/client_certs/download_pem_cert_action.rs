@@ -7,48 +7,45 @@ use crate::app::AppContext;
 
 #[my_http_server_swagger::http_route(
     method: "GET",
-    route: "/api/certificates/v1/downloadCert",
-    summary: "Download pfx",
-    description: "Download pfx",
-    controller: "Certificates",
-    input_data: "DownloadClientCertInputModel",
+    route: "/api/certificates/v1/pem/downloadCert",
+    summary: "Download pem certificate",
+    description: "Download pem certificate",
+    controller: "Client Certificates",
+    input_data: "DownloadPemClientCertInputModel",
     result:[
         {status_code: 200, description: "Certificate as a text"},
     ]
 )]
-pub struct DownloadCertAction {
+pub struct DownloadPemCertificateAction {
     app: Arc<AppContext>,
 }
 
-impl DownloadCertAction {
+impl DownloadPemCertificateAction {
     pub fn new(app: Arc<AppContext>) -> Self {
         Self { app }
     }
 }
 async fn handle_request(
-    action: &DownloadCertAction,
-    input_data: DownloadClientCertInputModel,
+    action: &DownloadPemCertificateAction,
+    input_data: DownloadPemClientCertInputModel,
     _ctx: &HttpContext,
 ) -> Result<HttpOkResult, HttpFailResult> {
-    let result = crate::flows::get_pfx(
+    let result = crate::storage::cert::load_pem_certificate(
         &action.app,
         &input_data.ca_name,
         &input_data.email,
-        &input_data.password,
     )
-    .await?;
+    .await;
 
-    return HttpOutput::as_file("cert.pfx".to_string(), result)
+    return HttpOutput::as_text(String::from_utf8(result.into()).unwrap())
         .into_ok_result(true)
         .into();
 }
 
 #[derive(MyHttpInput)]
-struct DownloadClientCertInputModel {
+struct DownloadPemClientCertInputModel {
     #[http_query(name = "caName", description = "Common name")]
     pub ca_name: String,
     #[http_query(name = "email", description = "Email")]
     pub email: String,
-    #[http_query(name = "password", description = "Certificate Password")]
-    pub password: String,
 }
