@@ -7,7 +7,7 @@ use crate::app::AppContext;
 
 #[my_http_server_swagger::http_route(
     method: "GET",
-    route: "/api/CaAccessList/v1",
+    route: "/api/CaUsersList/v1/",
     summary: "Get Client Certificate Access List",
     description: "Get Client Certificate Access List",
     controller: "Client Certificate Accesses",

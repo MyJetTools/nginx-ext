@@ -131,8 +131,18 @@ pub fn build_controllers(app: &Arc<AppContext>) -> ControllersMiddleware {
         crate::http::controllers::client_certs_accesses::GetAccessListAction::new(app.clone()),
     ));
 
+    // Users controller
+
     result.register_post_action(Arc::new(
-        crate::http::controllers::client_certs_accesses::AddUserAction::new(app.clone()),
+        crate::http::controllers::ca_users::AddUserAction::new(app.clone()),
+    ));
+
+    result.register_delete_action(Arc::new(
+        crate::http::controllers::ca_users::DeleteUserAction::new(app.clone()),
+    ));
+
+    result.register_get_action(Arc::new(
+        crate::http::controllers::ca_users::GetListOfUsersAction::new(app.clone()),
     ));
 
     result

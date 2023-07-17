@@ -1,4 +1,5 @@
 pub mod ca;
+pub mod ca_users;
 pub mod client_certs;
 pub mod client_certs_accesses;
 pub mod nginx;

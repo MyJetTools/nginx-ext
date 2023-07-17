@@ -7,10 +7,10 @@ use crate::app::AppContext;
 
 #[my_http_server_swagger::http_route(
     method: "POST",
-    route: "/api/CaAccessList/v1/addUser",
+    route: "/api/CaUsers/v1/",
     summary: "Add user if not exists",
     description: "Add user if not exists",
-    controller: "Client Certificate Accesses",
+    controller: "Client Certificate Users",
     input_data: "AddUserInputContract",
     result:[
         {status_code: 202, description: "Ok result"},
