@@ -1,4 +1,4 @@
-use crate::{app::AppContext, storage::nginx::models::HttpConfig};
+use crate::{app::AppContext, storage::model::HttpConfig};
 
 pub async fn insert_or_replace(app: &AppContext, domain: String, config: HttpConfig) {
     let mut nginx_content = app.nginx_file_content.write().await;

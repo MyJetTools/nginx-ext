@@ -1,4 +1,4 @@
-use crate::{app::AppContext, flows::FlowError, storage::nginx::models::HttpConfig};
+use crate::{app::AppContext, flows::FlowError, storage::model::HttpConfig};
 
 pub async fn insert_or_replace(
     app: &AppContext,

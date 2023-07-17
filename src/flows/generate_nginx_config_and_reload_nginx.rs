@@ -1,4 +1,4 @@
-use crate::{app::AppContext, storage::nginx::models::NginxFileContent};
+use crate::{app::AppContext, storage::model::NginxFileContent};
 
 use super::FlowError;
 

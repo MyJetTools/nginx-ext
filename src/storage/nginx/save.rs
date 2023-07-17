@@ -1,6 +1,4 @@
-use crate::settings::SettingsReader;
-
-use super::models::NginxFileContent;
+use crate::{settings::SettingsReader, storage::model::NginxFileContent};
 
 pub async fn save(settings_reader: &SettingsReader, content: &NginxFileContent) {
     let ca_path = settings_reader.get_config_path().await;

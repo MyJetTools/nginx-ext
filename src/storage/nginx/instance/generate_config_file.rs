@@ -1,4 +1,4 @@
-use crate::{ssl_certificates::SslCertificates, storage::nginx::models::NginxFileContent};
+use crate::{ssl_certificates::SslCertificates, storage::model::NginxFileContent};
 
 use super::NginxPath;
 

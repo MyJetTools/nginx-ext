@@ -2,7 +2,7 @@ use my_http_server::HttpFailResult;
 use my_http_server_swagger::*;
 use serde::{Deserialize, Serialize};
 
-use crate::storage::nginx::models::*;
+use crate::storage::model::*;
 
 #[derive(MyHttpInput, Serialize)]
 pub struct HttpConfigurationHttpInputContract {

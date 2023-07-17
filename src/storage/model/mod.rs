@@ -7,7 +7,7 @@ pub use upstreams::*;
 
 use crate::ssl_certificates::SslCertificates;
 
-use super::instance::NginxPath;
+use super::nginx::instance::NginxPath;
 
 #[derive(Default, Deserialize, Serialize)]
 pub struct NginxFileContent {

@@ -1,6 +1,4 @@
-use crate::app::AppContext;
-
-use super::super::models::UpStreamRouteStorageModel;
+use crate::{app::AppContext, storage::model::UpStreamRouteStorageModel};
 
 pub async fn insert_or_replace(
     app: &AppContext,

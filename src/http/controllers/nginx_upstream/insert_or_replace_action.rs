@@ -4,7 +4,7 @@ use my_http_server::{HttpContext, HttpFailResult, HttpOkResult, HttpOutput};
 use my_http_server_swagger::*;
 use serde::Deserialize;
 
-use crate::{app::AppContext, storage::nginx::models::UpStreamRouteStorageModel};
+use crate::{app::AppContext, storage::model::UpStreamRouteStorageModel};
 
 #[my_http_server_swagger::http_route(
     method: "POST",
