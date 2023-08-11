@@ -1,7 +1,6 @@
 use std::sync::Arc;
 
-use my_http_server::{types::FileContent, HttpContext, HttpFailResult, HttpOkResult, HttpOutput};
-use my_http_server_swagger::MyHttpInput;
+use my_http_server::{HttpContext, HttpFailResult, HttpOkResult, HttpOutput};
 
 use crate::app::AppContext;
 
