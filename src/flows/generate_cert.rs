@@ -17,11 +17,14 @@ pub async fn generate_cert(
     ca_cn: &str,
     email: &str,
 ) -> Result<(), FlowError> {
+    println!("Loading private key");
     let ca_private_key = crate::storage::ca::load_private_key(app, ca_cn).await;
 
     //let ca_path = crate::storage::utils::get_ca_path(app, ca_cn).await;
+    println!("Creating folder");
     let cert_path = crate::storage::cert::create_folder_if_not_exists(app, ca_cn, email).await;
 
+    println!("Writing-1");
     // Generate a 2048 bit RSA private key for the client
     let rsa_client = Rsa::generate(4096).unwrap();
     let pkey_client = PKey::from_rsa(rsa_client).unwrap();
@@ -33,6 +36,7 @@ pub async fn generate_cert(
     .await
     .unwrap();
 
+    println!("Writing-2");
     tokio::fs::write(
         cert_path.to_public_key_file_name(),
         pkey_client.public_key_to_pem().unwrap(),
