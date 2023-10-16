@@ -44,8 +44,10 @@ pub async fn generate_cert(
     .await
     .unwrap();
 
+    println!("Getting 509 name");
     let ca_name = crate::storage::ca::get_509_name(app, ca_cn).await;
 
+    println!("Building X509 name");
     // Build the X509 name for the client
     let mut builder = X509NameBuilder::new().unwrap();
     builder.append_entry_by_nid(Nid::COMMONNAME, email).unwrap();
@@ -62,6 +64,7 @@ pub async fn generate_cert(
         .sign(&pkey_client, MessageDigest::sha256())
         .unwrap();
 
+    println!("Building client certificate");
     // Build the client certificate
     let mut cert_builder = X509::builder().unwrap();
     cert_builder.set_version(2).unwrap();
@@ -83,6 +86,7 @@ pub async fn generate_cert(
         .unwrap();
     let cert_client = cert_builder.build();
 
+    println!("Writing cert");
     tokio::fs::write(cert_path.to_cert_file_name(), cert_client.to_pem().unwrap())
         .await
         .unwrap();
