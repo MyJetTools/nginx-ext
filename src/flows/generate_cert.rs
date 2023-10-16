@@ -64,7 +64,7 @@ pub async fn generate_cert(
         .sign(&pkey_client, MessageDigest::sha256())
         .unwrap();
 
-    println!("Building client certificate");
+    println!("Building client certificate-1");
     // Build the client certificate
     let mut cert_builder = X509::builder().unwrap();
     cert_builder.set_version(2).unwrap();
@@ -80,10 +80,11 @@ pub async fn generate_cert(
     let not_after = openssl::asn1::Asn1Time::days_from_now(365 * 10).unwrap();
     cert_builder.set_not_after(&not_after).unwrap();
     cert_builder.set_pubkey(&pkey_client).unwrap();
-
+    println!("Building client certificate-2");
     cert_builder
         .sign(&ca_private_key.into_private_key(), MessageDigest::sha256())
         .unwrap();
+    println!("Building client certificate-3");
     let cert_client = cert_builder.build();
 
     println!("Writing cert");
