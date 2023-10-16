@@ -36,6 +36,6 @@ impl Into<String> for PemPrivateKey {
 
 impl Into<PemPrivateKey> for PKey<Private> {
     fn into(self) -> PemPrivateKey {
-        PemPrivateKey::from_bytes(self.public_key_to_pem().unwrap())
+        PemPrivateKey::from_bytes(self.private_key_to_pem_pkcs8().unwrap())
     }
 }
