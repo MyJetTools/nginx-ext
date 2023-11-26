@@ -1,11 +1,12 @@
+use my_http_server::macros::*;
+use my_http_server::*;
 use std::sync::Arc;
 
-use my_http_server::{HttpContext, HttpFailResult, HttpOkResult, HttpOutput};
 use serde::Serialize;
 
 use crate::app::AppContext;
 
-#[my_http_server_swagger::http_route(
+#[http_route(
     method: "GET",
     route: "/api/ssl/v1/list",
     summary: "Get List of SSL certificates",

@@ -1,12 +1,13 @@
 use std::sync::Arc;
 
-use my_http_server::{HttpContext, HttpFailResult, HttpOkResult, HttpOutput};
-use my_http_server_swagger::*;
+use my_http_server::macros::*;
+use my_http_server::*;
+
 use serde::Deserialize;
 
 use crate::{app::AppContext, storage::model::UpStreamRouteStorageModel};
 
-#[my_http_server_swagger::http_route(
+#[http_route(
     method: "POST",
     route: "/api/nginx/upstream/v1",
     summary: "Insert or replace upstream configuration",

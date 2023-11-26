@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 
 use rust_extensions::{date_time::DateTimeAsMicroseconds, StrOrString};
 use serde::{Deserialize, Serialize};
@@ -53,7 +53,7 @@ impl HttpConfig {
         &self,
         domain: &str,
         dest: &mut String,
-        templates_repo: &Option<HashMap<String, Vec<String>>>,
+        templates_repo: &Option<BTreeMap<String, Vec<String>>>,
         ssl_certs: &SslCertificates,
         nginx_path: &NginxPath,
     ) {
@@ -136,7 +136,7 @@ impl HttpConfigLocation {
     pub fn generate_nginx_configuration(
         &self,
         dest: &mut String,
-        templates_repo: &Option<HashMap<String, Vec<String>>>,
+        templates_repo: &Option<BTreeMap<String, Vec<String>>>,
     ) {
         dest.push_str("\n location ");
         dest.push_str(self.location.as_str());
@@ -155,7 +155,7 @@ impl HttpConfigLocation {
 fn render_templates(
     dest: &mut String,
     templates: &Option<Vec<String>>,
-    templates_repo: &Option<HashMap<String, Vec<String>>>,
+    templates_repo: &Option<BTreeMap<String, Vec<String>>>,
     offset: usize,
 ) {
     if templates.is_none() {

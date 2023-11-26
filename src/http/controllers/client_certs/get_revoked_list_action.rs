@@ -1,11 +1,11 @@
 use std::sync::Arc;
 
-use my_http_server::{HttpContext, HttpFailResult, HttpOkResult, HttpOutput};
-use my_http_server_swagger::MyHttpInput;
+use my_http_server::macros::*;
+use my_http_server::*;
 
 use crate::{app::AppContext, to_hex::ToHex};
 
-#[my_http_server_swagger::http_route(
+#[http_route(
     method: "GET",
     route: "/api/revoked/v1/list",
     summary: "Get List of revoked certificates",

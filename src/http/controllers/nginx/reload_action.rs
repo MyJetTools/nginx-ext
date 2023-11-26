@@ -1,10 +1,11 @@
 use std::sync::Arc;
 
-use my_http_server::{HttpContext, HttpFailResult, HttpOkResult, HttpOutput};
+use my_http_server::macros::*;
+use my_http_server::*;
 
 use crate::app::AppContext;
 
-#[my_http_server_swagger::http_route(
+#[http_route(
     method: "POST",
     route: "/api/nginx/v1/reload",
     summary: "Reloads nginx",

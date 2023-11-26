@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use my_http_server_controllers::controllers::ControllersMiddleware;
+use my_http_server::controllers::ControllersMiddleware;
 
 use crate::app::AppContext;
 
@@ -100,6 +100,10 @@ pub fn build_controllers(app: &Arc<AppContext>) -> ControllersMiddleware {
     ));
 
     // NGINX Templates Controller
+
+    result.register_get_action(Arc::new(
+        crate::http::controllers::nginx_templates::GetTemplatesAction::new(app.clone()),
+    ));
 
     result.register_post_action(Arc::new(
         crate::http::controllers::nginx_templates::InsertOrReplaceAction::new(app.clone()),

@@ -1,11 +1,12 @@
 use std::sync::Arc;
 
-use my_http_server::{HttpContext, HttpFailResult, HttpOkResult, HttpOutput};
+use my_http_server::macros::*;
+use my_http_server::*;
 
 use super::models::*;
 use crate::app::AppContext;
 
-#[my_http_server_swagger::http_route(
+#[http_route(
     method: "POST",
     route: "/api/nginx/http/v1",
     summary: "Insert or replace Http configuration",

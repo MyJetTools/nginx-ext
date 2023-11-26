@@ -1,5 +1,6 @@
-use my_http_server::HttpFailResult;
-use my_http_server_swagger::*;
+use my_http_server::macros::*;
+use my_http_server::*;
+
 use serde::{Deserialize, Serialize};
 
 use crate::storage::model::*;

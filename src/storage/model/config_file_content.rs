@@ -1,6 +1,6 @@
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap};
 
-use serde::{Deserialize, Serialize, __private::de};
+use serde::{Deserialize, Serialize};
 
 use crate::{ssl_certificates::SslCertificates, storage::nginx::instance::NginxPath};
 
@@ -13,7 +13,7 @@ pub struct ConfigFileContent {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub http_configs: Option<HashMap<String, HttpConfig>>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub templates: Option<HashMap<String, Vec<String>>>,
+    pub templates: Option<BTreeMap<String, Vec<String>>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub client_cert_accesses: Option<HashMap<String, HashMap<String, Vec<String>>>>,
 }
