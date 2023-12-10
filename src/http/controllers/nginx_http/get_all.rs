@@ -9,37 +9,38 @@ use super::models::*;
 
 #[http_route(
     method: "GET",
-    route: "/api/nginx/http/v1",
-    summary: "Get Http configuration",
-    description: "Get Http configuration",
+    route: "/api/nginx/http/v1/all",
+    summary: "Get all Http configurations",
+    description: "Get all Http configurations",
     controller: "Nginx Http",
     input_data: "GetHttpConfigurationHttpInputContract",
     result:[
-        {status_code: 202, description: "Ok result", model:"HttpConfigurationHttpInputContract"},
+        {status_code: 202, description: "Ok result", model:"Vec<HttpConfigurationHttpInputContract>"},
     ]
 )]
-pub struct GetAction {
+pub struct GetAllAction {
     app: Arc<AppContext>,
 }
 
-impl GetAction {
+impl GetAllAction {
     pub fn new(app: Arc<AppContext>) -> Self {
         Self { app }
     }
 }
 async fn handle_request(
-    action: &GetAction,
+    action: &GetAllAction,
     input_data: GetHttpConfigurationHttpInputContract,
     _ctx: &HttpContext,
 ) -> Result<HttpOkResult, HttpFailResult> {
-    let config = {
+    let result = {
+        let mut result = Vec::new();
         let read_access = action.app.config_file_content.read().await;
 
         match &read_access.http_configs {
             Some(configs) => {
-                if let Some(config) = configs.get(&input_data.domain) {
-                    Some(HttpConfigurationHttpInputContract {
-                        domain: input_data.domain,
+                for config in configs.values() {
+                    let item = HttpConfigurationHttpInputContract {
+                        domain: input_data.domain.clone(),
                         port: config.port,
                         protocol: config.protocol.to_string().to_string(),
                         ssl_certificate: config.ssl_cert.clone(),
@@ -55,20 +56,17 @@ async fn handle_request(
                                 templates: l.templates.clone(),
                             })
                             .collect(),
-                    })
-                } else {
-                    None
+                    };
+                    result.push(item);
                 }
+
+                result
             }
-            None => None,
+            None => result,
         }
     };
 
-    if let Some(config) = config {
-        return HttpOutput::as_json(config).into_ok_result(true).into();
-    } else {
-        return Err(HttpFailResult::as_forbidden("Not found".to_string().into()));
-    }
+    return HttpOutput::as_json(result).into_ok_result(true).into();
 }
 
 #[derive(MyHttpInput)]

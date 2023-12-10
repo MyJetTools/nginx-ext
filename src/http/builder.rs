@@ -86,6 +86,10 @@ pub fn build_controllers(app: &Arc<AppContext>) -> ControllersMiddleware {
         crate::http::controllers::nginx_http::GetAction::new(app.clone()),
     ));
 
+    result.register_get_action(Arc::new(
+        crate::http::controllers::nginx_http::GetAllAction::new(app.clone()),
+    ));
+
     result.register_delete_action(Arc::new(
         crate::http::controllers::nginx_http::DeleteHttpConfigAction::new(app.clone()),
     ));

@@ -8,7 +8,9 @@ pub async fn delete(app: &AppContext, name: &str) -> bool {
 
         if result {
             crate::storage::model::save(&app.settings_reader, &nginx_content).await;
-            crate::flows::generate_nginx_config_and_reload_nginx(&app, &nginx_content).await;
+            crate::flows::generate_nginx_config_and_reload_nginx(&app, &nginx_content)
+                .await
+                .unwrap();
         }
         return result;
     }

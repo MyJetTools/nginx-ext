@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::storage::model::*;
 
-#[derive(MyHttpInput, Serialize)]
+#[derive(MyHttpInput, Serialize, MyHttpObjectStructure)]
 pub struct HttpConfigurationHttpInputContract {
     #[http_body(description = "Domain name")]
     pub domain: String,
