@@ -13,7 +13,6 @@ use super::models::*;
     summary: "Get all Http configurations",
     description: "Get all Http configurations",
     controller: "Nginx Http",
-    input_data: "GetHttpConfigurationHttpInputContract",
     result:[
         {status_code: 202, description: "Ok result", model:"Vec<HttpConfigurationHttpInputContract>"},
     ]
@@ -29,7 +28,6 @@ impl GetAllAction {
 }
 async fn handle_request(
     action: &GetAllAction,
-    input_data: GetHttpConfigurationHttpInputContract,
     _ctx: &HttpContext,
 ) -> Result<HttpOkResult, HttpFailResult> {
     let result = {
@@ -38,9 +36,9 @@ async fn handle_request(
 
         match &read_access.http_configs {
             Some(configs) => {
-                for config in configs.values() {
+                for (domain, config) in configs {
                     let item = HttpConfigurationHttpInputContract {
-                        domain: input_data.domain.clone(),
+                        domain: domain.clone(),
                         port: config.port,
                         protocol: config.protocol.to_string().to_string(),
                         ssl_certificate: config.ssl_cert.clone(),
@@ -67,10 +65,4 @@ async fn handle_request(
     };
 
     return HttpOutput::as_json(result).into_ok_result(true).into();
-}
-
-#[derive(MyHttpInput)]
-pub struct GetHttpConfigurationHttpInputContract {
-    #[http_query(description = "Domain name")]
-    pub domain: String,
 }
