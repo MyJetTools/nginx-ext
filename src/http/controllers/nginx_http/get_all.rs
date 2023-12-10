@@ -14,7 +14,7 @@ use super::models::*;
     description: "Get all Http configurations",
     controller: "Nginx Http",
     result:[
-        {status_code: 202, description: "Ok result", model:"Vec<HttpConfigurationHttpInputContract>"},
+        {status_code: 200, description: "List of domain configurations", model:"Vec<HttpConfigurationHttpInputContract>"},
     ]
 )]
 pub struct GetAllAction {
