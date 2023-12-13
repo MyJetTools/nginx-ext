@@ -24,14 +24,16 @@ async fn main() {
     init_file_system(&app).await;
 
     if app.settings_reader.get_start_nginx().await {
-        println!("Starting nginx");
+        tokio::spawn(async move {
+            println!("Starting nginx");
 
-        let output = tokio::process::Command::new("nginx")
-            .output()
-            .await
-            .unwrap();
+            let output = tokio::process::Command::new("nginx")
+                .output()
+                .await
+                .unwrap();
 
-        println!("Nginx start result: {:?}", output);
+            println!("Nginx start result: {:?}", output);
+        });
     }
 
     crate::http::start(&app);
