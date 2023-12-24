@@ -1,7 +1,6 @@
-use crate::{
-    app::AppContext,
-    to_hex::{FromHex, ToHex},
-};
+use rust_extensions::hex::*;
+
+use crate::app::AppContext;
 
 pub async fn get_next_serial_number(app: &AppContext, ca_cn: &str) -> u32 {
     let ca_path = app

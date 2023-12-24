@@ -2,8 +2,9 @@ use std::sync::Arc;
 
 use my_http_server::macros::*;
 use my_http_server::*;
+use rust_extensions::hex::*;
 
-use crate::{app::AppContext, to_hex::ToHex};
+use crate::app::AppContext;
 
 #[http_route(
     method: "GET",

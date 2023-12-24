@@ -12,7 +12,6 @@ mod pem;
 mod settings;
 mod ssl_certificates;
 mod storage;
-mod to_hex;
 
 #[tokio::main]
 async fn main() {
