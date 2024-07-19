@@ -44,7 +44,6 @@ pub struct HttpConfig {
     pub locations: Vec<HttpConfigLocation>,
     pub ssl_cert: Option<String>,
     pub ca_cn: Option<String>,
-
     pub templates: Option<Vec<String>>,
 }
 
@@ -128,7 +127,8 @@ impl HttpConfig {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct HttpConfigLocation {
     pub location: String,
-    pub proxy_pass: String,
+    pub proxy_pass: Option<String>,
+    pub raw_lines: Option<Vec<String>>,
     pub templates: Option<Vec<String>>,
 }
 
@@ -142,9 +142,18 @@ impl HttpConfigLocation {
         dest.push_str(self.location.as_str());
         dest.push_str("  {\n");
 
-        dest.push_str("  proxy_pass ");
-        dest.push_str(self.proxy_pass.as_str());
-        dest.push_str(";\n");
+        if let Some(proxy_pass) = &self.proxy_pass {
+            dest.push_str("  proxy_pass ");
+            dest.push_str(proxy_pass);
+            dest.push_str(";\n");
+        }
+
+        if let Some(raw_lines) = &self.raw_lines {
+            for raw_line in raw_lines {
+                dest.push_str(raw_line);
+                dest.push_str("\n");
+            }
+        }
 
         render_templates(dest, &self.templates, templates_repo, 2);
 

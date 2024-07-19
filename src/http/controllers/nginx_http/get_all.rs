@@ -52,6 +52,7 @@ async fn handle_request(
                                 location: l.location.clone(),
                                 proxy_pass: l.proxy_pass.clone(),
                                 templates: l.templates.clone(),
+                                raw_lines: l.raw_lines.clone(),
                             })
                             .collect(),
                     };

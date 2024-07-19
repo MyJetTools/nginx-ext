@@ -3,7 +3,6 @@ use std::sync::Arc;
 use app::AppContext;
 
 mod app;
-mod base_64;
 
 mod config_path;
 mod flows;
