@@ -12,20 +12,23 @@ pub async fn create_self_signed_ssl_certificate_if_needed(app: &AppContext) {
     let result_pk = tokio::fs::read(private_key_file_name.as_str()).await;
     if result_cert.is_err() || result_pk.is_err() {
         println!("Self signed cert not found. Generating brand new self signed certificate...");
-        let (p_key, cert) = generate_self_signed_ssl_certificate();
+        let self_signed_cert = my_tls::self_signed_cert::generate("localhost").unwrap();
 
-        let p_key_content: Vec<u8> = p_key.into();
-        tokio::fs::write(private_key_file_name, p_key_content.as_slice())
-            .await
-            .unwrap();
+        tokio::fs::write(
+            private_key_file_name,
+            self_signed_cert.private_key.secret_der(),
+        )
+        .await
+        .unwrap();
 
-        let cert_content: Vec<u8> = cert.into();
+        let cert_content: Vec<u8> = self_signed_cert.certificate.to_vec();
         tokio::fs::write(cert_file_name, cert_content.as_slice())
             .await
             .unwrap();
     }
 }
 
+/*
 fn generate_self_signed_ssl_certificate() -> (PemPrivateKey, PemCertificate) {
     use rcgen::generate_simple_self_signed;
     let subject_alt_names = vec!["localhost".into(), "127.0.0.1".into()];
@@ -39,3 +42,18 @@ fn generate_self_signed_ssl_certificate() -> (PemPrivateKey, PemCertificate) {
         PemCertificate::from_bytes(cert),
     )
 }
+
+fn generate_pk(cn_name: String) -> (CertificateDer<'static>, String) {
+    use rcgen::*;
+
+    let subject_alt_names = vec![cn_name];
+
+    let certified_key = generate_simple_self_signed(subject_alt_names).unwrap();
+
+    let cert = certified_key.cert.der().clone();
+
+    let key_pair = certified_key.key_pair.serialize_pem();
+
+    (cert, key_pair)
+}
+ */
