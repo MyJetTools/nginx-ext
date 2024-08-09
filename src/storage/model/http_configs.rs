@@ -130,6 +130,7 @@ pub struct HttpConfigLocation {
     pub proxy_pass: Option<String>,
     pub raw_lines: Option<Vec<String>>,
     pub templates: Option<Vec<String>>,
+    pub http2: Option<bool>,
 }
 
 impl HttpConfigLocation {
@@ -146,6 +147,12 @@ impl HttpConfigLocation {
             dest.push_str("  proxy_pass ");
             dest.push_str(proxy_pass);
             dest.push_str(";\n");
+        }
+
+        if let Some(http2) = self.http2 {
+            if http2 {
+                dest.push_str("  proxy_http_version 2;\n");
+            }
         }
 
         if let Some(raw_lines) = &self.raw_lines {

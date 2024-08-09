@@ -54,6 +54,7 @@ async fn handle_request(
                                 proxy_pass: l.proxy_pass.clone(),
                                 templates: l.templates.clone(),
                                 raw_lines: l.raw_lines.clone(),
+                                http2: l.http2,
                             })
                             .collect(),
                     })

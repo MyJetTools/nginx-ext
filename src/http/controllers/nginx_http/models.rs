@@ -72,6 +72,8 @@ pub struct HttpLocationHttpModel {
     #[serde(rename = "proxyPass")]
     pub proxy_pass: Option<String>,
 
+    pub http2: Option<bool>,
+
     #[serde(rename = "rawLines")]
     pub raw_lines: Option<Vec<String>>,
 
@@ -85,6 +87,7 @@ impl Into<HttpConfigLocation> for HttpLocationHttpModel {
             proxy_pass: self.proxy_pass,
             templates: self.templates,
             raw_lines: self.raw_lines,
+            http2: self.http2,
         }
     }
 }
