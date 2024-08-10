@@ -130,6 +130,7 @@ pub struct HttpConfigLocation {
     pub proxy_pass: Option<String>,
     pub raw_lines: Option<Vec<String>>,
     pub templates: Option<Vec<String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub http2: Option<bool>,
 }
 

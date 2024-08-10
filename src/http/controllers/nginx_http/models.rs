@@ -72,6 +72,7 @@ pub struct HttpLocationHttpModel {
     #[serde(rename = "proxyPass")]
     pub proxy_pass: Option<String>,
 
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub http2: Option<bool>,
 
     #[serde(rename = "rawLines")]
