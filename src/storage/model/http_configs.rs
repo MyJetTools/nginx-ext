@@ -132,6 +132,8 @@ pub struct HttpConfigLocation {
     pub templates: Option<Vec<String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub http2: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub stub_status: Option<bool>,
 }
 
 impl HttpConfigLocation {
@@ -153,6 +155,12 @@ impl HttpConfigLocation {
         if let Some(http2) = self.http2 {
             if http2 {
                 dest.push_str("  proxy_http_version 2;\n");
+            }
+        }
+
+        if let Some(stub_status) = self.stub_status {
+            if stub_status {
+                dest.push_str("  stub_status;\n");
             }
         }
 

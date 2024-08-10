@@ -46,17 +46,7 @@ async fn handle_request(
                         client_cert_ca_cn: config.ca_cn.clone(),
 
                         templates: config.templates.clone(),
-                        locations: config
-                            .locations
-                            .iter()
-                            .map(|l| HttpLocationHttpModel {
-                                location: l.location.clone(),
-                                proxy_pass: l.proxy_pass.clone(),
-                                templates: l.templates.clone(),
-                                raw_lines: l.raw_lines.clone(),
-                                http2: l.http2,
-                            })
-                            .collect(),
+                        locations: config.locations.iter().map(|l| l.into()).collect(),
                     })
                 } else {
                     None

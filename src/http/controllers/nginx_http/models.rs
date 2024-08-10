@@ -75,6 +75,9 @@ pub struct HttpLocationHttpModel {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub http2: Option<bool>,
 
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub stub_status: Option<bool>,
+
     #[serde(rename = "rawLines")]
     pub raw_lines: Option<Vec<String>>,
 
@@ -89,6 +92,20 @@ impl Into<HttpConfigLocation> for HttpLocationHttpModel {
             templates: self.templates,
             raw_lines: self.raw_lines,
             http2: self.http2,
+            stub_status: self.stub_status,
+        }
+    }
+}
+
+impl<'s> Into<HttpLocationHttpModel> for &'s HttpConfigLocation {
+    fn into(self) -> HttpLocationHttpModel {
+        HttpLocationHttpModel {
+            location: self.location.to_string(),
+            proxy_pass: self.proxy_pass.clone(),
+            templates: self.templates.clone(),
+            raw_lines: self.raw_lines.clone(),
+            http2: self.http2.clone(),
+            stub_status: self.stub_status.clone(),
         }
     }
 }
